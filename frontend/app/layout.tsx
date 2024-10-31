@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/widgets/navigation/ui/navigation";
+import Header from "@/shared/ui/header/header";
+import { Navigation } from "@/widgets/navigation";
+import { Profile } from "@/widgets/profile";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,8 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}  antialiased h-wull min-h-screen`}>
-        <Navigation />
-        <div className="w-full h-full px-32">{children}</div>
+        <Header />
+        <div className="w-full h-full px-32 flex">
+          <div className="w-1/4 h-auto border border-stone-950">
+            <Navigation />
+          </div>
+          <div className="w-full mx-5">{children}</div>
+          <div className="w-1/3 h-auto border border-stone-950">
+            <Profile />
+          </div>
+        </div>
       </body>
     </html>
   );

@@ -3,10 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #e5e5e5;
   --foreground: #171717;
+}
+
+* {
+  transition: all 0.3s ease-in-out;
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: #e5e5e5;
 }

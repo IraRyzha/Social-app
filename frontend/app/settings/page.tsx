@@ -1,7 +1,7 @@
-export default function Home() {
+export default function Settings() {
   return (
     <div className="w-full h-screen border border-stone-950">
-      <p>Home</p>
+      <p>Settings</p>
     </div>
   );
 }
