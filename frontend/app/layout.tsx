@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Flash",
+  title: "flash",
   description: "best app:)",
 };
 
