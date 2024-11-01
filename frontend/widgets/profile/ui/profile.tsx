@@ -1,8 +1,27 @@
+"use client";
 import Image from "next/image";
+import userImage from "@/shared/images/userImage.png";
 import flashLogo from "@/shared/images/flashLogo.webp";
 import { FlashCoin } from "@/shared/ui/icons";
+import { useAuth } from "@/config/AuthProvider";
 
 export default function Profile() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="w-full h-auto px-11 py-8 flex flex-col items-center justify-center gap-5 rounded-xl border border-stone-950 bg-white">
+        <Image
+          src={userImage}
+          alt="Profile Picture"
+          width={96}
+          height={96}
+          className="object-cover"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-auto px-11 py-8 flex flex-col items-start justify-center gap-5 rounded-xl border border-stone-950 bg-white">
       <div className="w-full h-auto flex flex-col items-center gap-2 border border-stone-950">
