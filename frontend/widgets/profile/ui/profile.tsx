@@ -10,7 +10,7 @@ export default function Profile() {
 
   if (!isAuthenticated) {
     return (
-      <div className="w-full h-auto px-11 py-8 flex flex-col items-center justify-center gap-5 rounded-xl border border-stone-950 bg-white">
+      <div className="w-full h-auto px-11 py-8 flex flex-col items-center justify-center gap-5 rounded-xl bg-white shadow">
         <Image
           src={userImage}
           alt="Profile Picture"
@@ -23,8 +23,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="w-full h-auto px-11 py-8 flex flex-col items-start justify-center gap-5 rounded-xl border border-stone-950 bg-white">
-      <div className="w-full h-auto flex flex-col items-center gap-2 border border-stone-950">
+    <div className="w-full h-auto px-11 py-8 flex flex-col items-start justify-center gap-5 rounded-xl bg-white shadow">
+      <div className="w-full h-auto flex flex-col items-center gap-2">
         <div className="w-24 h-24 rounded-full overflow-hidden">
           <Image
             src={flashLogo}
@@ -34,13 +34,13 @@ export default function Profile() {
             className="object-cover"
           />
         </div>
-        <div className="text-center border border-stone-950">
+        <div className="text-center">
           <h2 className="text-xl font-semibold">ryzha</h2>
           <p className="text-sm text-green-500">online</p>
         </div>
       </div>
 
-      <div className="w-full flex flex-col items-center gap-2 border border-stone-950">
+      <div className="w-full flex flex-col items-center gap-2">
         <div className="w-full flex justify-center items-center gap-2">
           <StatisticItem
             textSize={"text-sm"}

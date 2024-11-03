@@ -8,14 +8,14 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-wull min-h-screen">
+    <div className="h-wull min-h-screen max-h-screen overflow-y-auto">
       <Header />
       <div className="w-full h-full px-32 flex">
-        <div className="w-1/4 h-auto border border-stone-950">
+        <div className="w-1/4 h-auto">
           <Navigation />
         </div>
         <div className="w-full mx-5">{children}</div>
-        <div className="w-1/3 h-auto border border-stone-950">
+        <div className="w-1/3 h-auto">
           <Profile />
         </div>
       </div>

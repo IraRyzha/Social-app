@@ -21,7 +21,7 @@ export default function AuthForm() {
         <button
           type="button"
           onClick={() => setIsRegistering(!isRegistering)}
-          className="text-blue-500 hover:underline"
+          className="text-main-blue-light hover:underline"
         >
           {isRegistering ? "Login here" : "Register here"}
         </button>

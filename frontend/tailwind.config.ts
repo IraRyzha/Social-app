@@ -12,8 +12,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        "main-blue": "#3e87c3", // Основний колір
+        "main-blue-light": "#69aee4", // Світліший відтінок
+        "main-blue-dark": "#2d6391", // Темніший відтінок
       },
     },
   },

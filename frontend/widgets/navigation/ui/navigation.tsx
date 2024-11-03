@@ -19,7 +19,7 @@ const iconComponents: Record<IconKey, () => JSX.Element> = {
 
 export default function Navigation() {
   return (
-    <nav className="w-full h-auto px-8 py-5 flex flex-col items-start justify-center gap-2 rounded-xl border border-stone-950 bg-white">
+    <nav className="w-full h-auto px-8 py-5 flex flex-col items-start justify-center gap-2 rounded-xl bg-white shadow">
       {menuItems.map((menuItem) => {
         const Icon = iconComponents[menuItem.icon];
         return (

@@ -3,41 +3,33 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    environment:
+      API_URL: http://localhost:3000
+      DATABASE_HOST: db
+      DATABASE_NAME: dev_db
+      DATABASE_PASSWORD: devpassword
+      DATABASE_PORT: "5432"
+      DATABASE_USER: devuser
+      JWT_SECRET: your_jwt_secret
+      PORT: "3000"
     ports:
-      - "3002:3000"
-    env_file:
-      - backend/.env.development
+      - "3002:3000" # Публікує бекенд на порту 3002, перенаправляючи на внутрішній порт 3000
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - ./backend:/app # Маунт папки backend у контейнер
+      - /app/node_modules # Використання анонімного тому для node_modules
     depends_on:
-      - db
-
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - frontend/.env
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - backend
+      - db # Забезпечує запуск db перед backend
 
   db:
     image: postgres:13
     environment:
+      POSTGRES_DB: dev_db
       POSTGRES_USER: devuser
       POSTGRES_PASSWORD: devpassword
-      POSTGRES_DB: dev_db
+    ports:
+      - "5432:5432" # Публікує PostgreSQL на порту 5432
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
-
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql # Ініціалізація бази даних
 volumes:
   db_data:

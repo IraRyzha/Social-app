@@ -18,7 +18,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full px-32 py-3 flex items-center justify-between mb-5 border border-stone-950 bg-white">
+    <header className="w-full px-32 py-3 flex items-center justify-between mb-6 bg-white shadow-md">
       <div className="flex justify-center items-center gap-3">
         <Image
           src={flashLogo}
