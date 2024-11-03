@@ -1,5 +1,5 @@
 interface RegisterFormData {
-  fullName: string;
+  username: string;
   email: string;
   password: string;
   bio: string;

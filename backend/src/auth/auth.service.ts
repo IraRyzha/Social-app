@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 // import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly usersService: UsersService
+    // private readonly jwtService: JwtService
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const user = await this.usersService.register(registerDto);
+    const user = await this.usersService.createUser(registerDto);
     return { message: 'User registered successfully', user };
   }
 

@@ -10,13 +10,10 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE, -- Зв'язок із таблицею users
   user_name VARCHAR(100), -- Повне ім'я користувача
-  email VARCHAR(100) UNIQUE NOT NULL, -- Email для автентифікації
-  password_hash VARCHAR(255) NOT NULL, -- Хешований пароль
   avatar_url VARCHAR(255), -- URL аватара
   status VARCHAR(20) DEFAULT 'offline', -- Статус користувача
   bio TEXT, -- Біографія користувача
@@ -27,6 +24,7 @@ CREATE TABLE profiles (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 CREATE TABLE followers (

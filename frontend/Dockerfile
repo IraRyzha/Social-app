@@ -1,15 +1,21 @@
-# Зазначте базовий образ
-FROM node:16-alpine
+# frontend/Dockerfile
+FROM node:18-alpine
 
-# Встановіть робочу директорію
+# Set the working directory
 WORKDIR /app
 
-# Копіюйте файли та встановіть залежності
+# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Копіюйте весь код
+# Copy the rest of the code
 COPY . .
 
-# Запустіть додаток
-CMD ["npm", "start"]
+# Build the Next.js app
+# RUN npm run build
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "run", "dev"]

@@ -5,7 +5,7 @@ import { useAuth } from "@/config/AuthProvider";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
-    fullName: "",
+    username: "",
     email: "",
     password: "",
     bio: "",
@@ -36,8 +36,8 @@ export default function RegistrationForm() {
         <span className="text-gray-700">Full Name</span>
         <input
           type="text"
-          name="fullName"
-          value={formData.fullName}
+          name="username"
+          value={formData.username}
           onChange={handleChange}
           className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           required
