@@ -116,6 +116,3 @@ CREATE TABLE loan_repayments (
   payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Дата виплати
 );
 
-
-
-INSERT INTO Users (Name) VALUES ('ryzha');

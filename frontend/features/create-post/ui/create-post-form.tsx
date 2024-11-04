@@ -1,6 +1,11 @@
+"use client";
 import { useState } from "react";
 
-export default function CreatePostForm() {
+interface Props {
+  toggleCreate?: () => void;
+}
+
+export default function CreatePostForm({ toggleCreate }: Props) {
   const [text, setText] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -8,6 +13,9 @@ export default function CreatePostForm() {
     // Логіка для обробки нового поста, наприклад, відправка даних на сервер
     console.log("New post:", text);
     setText(""); // Очищення поля після відправки
+    if (toggleCreate) {
+      toggleCreate();
+    }
   };
 
   return (
@@ -20,7 +28,13 @@ export default function CreatePostForm() {
           onChange={(e) => setText(e.target.value)}
           rows={3}
         />
-        <div className="flex items-center justify-end mt-1">
+        <div className="flex items-center justify-end gap-2 mt-1">
+          <button
+            onClick={toggleCreate}
+            className="bg-gray-400 text-white font-semibold px-4 py-1 rounded-lg text-sm hover:bg-gray-300 hover:scale-[1.02]"
+          >
+            Go back
+          </button>
           <button
             type="submit"
             className="bg-main-blue text-white font-semibold px-4 py-1 rounded-lg text-sm hover:bg-main-blue-dark hover:scale-[1.02]"

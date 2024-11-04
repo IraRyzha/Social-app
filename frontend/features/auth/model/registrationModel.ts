@@ -1,7 +1,6 @@
 import { RegisterFormData } from "./types";
 
 export async function registerUser(formData: RegisterFormData) {
-  console.log(formData);
   console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
   try {
     const response = await fetch(
@@ -12,7 +11,9 @@ export async function registerUser(formData: RegisterFormData) {
         body: JSON.stringify(formData),
       }
     );
-    return response.json();
+    const data = await response.json();
+    console.error(data);
+    return data;
   } catch (error) {
     console.error("Error during registration:", error);
     throw error;

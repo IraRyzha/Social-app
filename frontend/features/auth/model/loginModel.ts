@@ -13,6 +13,7 @@ export async function loginUser(formData: LoginFormData) {
     if (!response.ok) {
       throw new Error("Login failed");
     }
+    console.error(response.json());
     return response.json();
   } catch (error) {
     console.error("Error during login:", error);

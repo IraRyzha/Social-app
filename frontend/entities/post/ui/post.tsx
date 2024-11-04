@@ -11,9 +11,7 @@ interface Props {
   flashs: number;
 }
 export const Post = ({ user, text, date, flashs }: Props) => {
-  // Функція для форматування часу
   const formatTimeAgo = (date: string | number) => {
-    // Перетворюємо значення дати на мітку часу
     const dateInMillis = new Date(date).getTime();
 
     const seconds = Math.floor((Date.now() - dateInMillis) / 1000);
@@ -29,9 +27,9 @@ export const Post = ({ user, text, date, flashs }: Props) => {
     return `${days} days ago`;
   };
   return (
-    <div className="flex flex-col items-start bg-white p-5 rounded-lg shadow-md">
+    <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">
       <div className="w-full flex flex-1 justify-between">
-        <div className="flex flex-1">
+        <div className="flex flex-1 items-center">
           <Image
             src={user.photo}
             alt={`${user.name}'s profile`}
@@ -45,11 +43,11 @@ export const Post = ({ user, text, date, flashs }: Props) => {
           </div>
         </div>
         <div className="flex justify-center items-center gap-1">
-          <FlashCoin className="hover:scale-[1.1]" />
+          <FlashCoin className="hover:scale-[1.1] w-4" />
           <span className="text-black text-xs font-semibold">{flashs}</span>
         </div>
       </div>
-      <p className="text-gray-700 mt-3">{text}</p>
+      <p className="text-gray-700 text-sm mt-3">{text}</p>
     </div>
   );
 };

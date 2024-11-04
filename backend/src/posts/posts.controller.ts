@@ -1,7 +1,9 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { PostsService } from './posts.service';
+import { AuthHeaderInterceptor } from 'src/interceptors/auth-header.interceptor';
 
 @Controller('posts')
+@UseInterceptors(AuthHeaderInterceptor)
 export class PostsController {
   constructor(private readonly userService: PostsService) {}
 

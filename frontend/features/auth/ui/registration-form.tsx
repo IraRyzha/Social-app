@@ -10,7 +10,7 @@ export default function RegistrationForm() {
     password: "",
     bio: "",
   });
-  const { login } = useAuth();
+  const { login, setProfile } = useAuth();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,8 +24,18 @@ export default function RegistrationForm() {
     try {
       const result = await registerUser(formData);
       console.log("User registered:", result);
+      console.log(result.profile);
+      setProfile(result.profile);
+      window.alert("User registered");
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        bio: "",
+      });
     } catch (error) {
       console.error("Registration failed:", error);
+      window.alert("Registration failed");
     }
     login();
   };

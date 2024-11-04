@@ -16,15 +16,31 @@ export class UsersService {
     const userId = userResult.rows[0].id;
 
     // 2. Створення профілю для користувача в таблиці profiles
-    await this.databaseService.query(
-      `INSERT INTO profiles (user_id, user_name, bio) VALUES ($1, $2, $3)`,
+    const profileResult = await this.databaseService.query(
+      `INSERT INTO profiles (user_id, user_name, bio) VALUES ($1, $2, $3) RETURNING *`,
       [userId, username, bio]
     );
 
-    // 3. Перевірка, чи записано профіль правильно
-    console.log(await this.databaseService.query(`SELECT * FROM profiles`));
+    // 3. Перевірка, чи записано профіль правильн
 
-    return { message: 'User registered successfully', userId };
+    console.log(profileResult.rows[0]); // в консолі на сервері тут undefined
+
+    const profile = {
+      id: profileResult.rows[0].id,
+      user_id: userId,
+      user_name: profileResult.rows[0].user_name,
+      avatar_url: profileResult.rows[0].avatar_url || null, // за замовчуванням може бути null, якщо не встановлено
+      status: profileResult.rows[0].status || 'offline', // статус за замовчуванням
+      bio: profileResult.rows[0].bio,
+      followers_count: profileResult.rows[0].followers_count || 0,
+      following_count: profileResult.rows[0].following_count || 0,
+      posts_count: profileResult.rows[0].posts_count || 0,
+      points: profileResult.rows[0].points || 0,
+      created_at: profileResult.rows[0].created_at,
+      updated_at: profileResult.rows[0].updated_at,
+    };
+
+    return profile;
   }
 
   async getAllUsers() {

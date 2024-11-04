@@ -6,7 +6,7 @@ import { FlashCoin } from "@/shared/ui/icons";
 import { useAuth } from "@/config/AuthProvider";
 
 export default function Profile() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, profile } = useAuth();
 
   if (!isAuthenticated) {
     return (
@@ -35,8 +35,8 @@ export default function Profile() {
           />
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-semibold">ryzha</h2>
-          <p className="text-sm text-green-500">online</p>
+          <h2 className="text-xl font-semibold">{profile?.user_name}</h2>
+          <p className="text-sm text-green-500">{profile?.status}</p>
         </div>
       </div>
 
@@ -44,19 +44,23 @@ export default function Profile() {
         <div className="w-full flex justify-center items-center gap-2">
           <StatisticItem
             textSize={"text-sm"}
-            amount={100}
+            amount={profile?.followers_count ?? 0}
             ofEntety={"followwers"}
           />
           <StatisticItem
             textSize={"text-sm"}
-            amount={10}
+            amount={profile?.following_count ?? 0}
             ofEntety={"following"}
           />
         </div>
-        <StatisticItem textSize={"text-base"} amount={25} ofEntety={"posts"} />
+        <StatisticItem
+          textSize={"text-base"}
+          amount={profile?.posts_count ?? 0}
+          ofEntety={"posts"}
+        />
         <StatisticItem
           textSize={"text-lg"}
-          amount={1000}
+          amount={profile?.points ?? 0}
           ofEntety={<FlashCoin />}
         />
       </div>

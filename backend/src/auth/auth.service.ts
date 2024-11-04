@@ -12,23 +12,23 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const user = await this.usersService.createUser(registerDto);
-    return { message: 'User registered successfully', user };
+    const profile = await this.usersService.createUser(registerDto);
+    return { message: 'User registered successfully', profile };
   }
 
-  //   async login(loginDto: LoginDto) {
-  //     const user = await this.usersService.validateUser(
-  //       loginDto.email,
-  //       loginDto.password
-  //     );
+  // async login(loginDto: LoginDto) {
+  //   const user = await this.usersService.validateUser(
+  //     loginDto.email,
+  //     loginDto.password
+  //   );
 
-  //     if (!user) {
-  //       throw new UnauthorizedException('Invalid credentials');
-  //     }
-
-  //     const payload = { userId: user.id, email: user.email };
-  //     const token = this.jwtService.sign(payload);
-
-  //     return { accessToken: token };
+  //   if (!user) {
+  //     throw new UnauthorizedException('Invalid credentials');
   //   }
+
+  //   const payload = { userId: user.id, email: user.email };
+  //   const token = this.jwtService.sign(payload);
+
+  //   return { accessToken: token };
+  // }
 }

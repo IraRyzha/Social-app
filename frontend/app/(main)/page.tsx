@@ -7,6 +7,11 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [posts, setPosts] = useState<IPost[]>([]);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+
+  const handleCreating = () => {
+    setIsCreating((prev) => !prev);
+  };
 
   const fetchPots = async () => {
     const response: IPost[] = await getPosts();
@@ -16,12 +21,22 @@ export default function Home() {
 
   useEffect(() => {
     fetchPots();
-  }, [posts]);
+  }, []);
 
   return (
     <div className="w-full h-screen  flex flex-col gap-5 max-h-screen overflow-y-auto">
-      <CreatePostForm />
-      <div className="flex flex-col gap-3 max-h-screen overflow-y-auto">
+      {!isCreating && (
+        <div className="flex items-center justify-center">
+          <button
+            onClick={handleCreating}
+            className="bg-main-blue text-white font-semibold px-4 py-1 rounded-lg text-sm hover:bg-main-blue-dark hover:scale-[1.02]"
+          >
+            Create new post
+          </button>
+        </div>
+      )}
+      {isCreating && <CreatePostForm toggleCreate={() => handleCreating()} />}
+      <div className="flex flex-col gap-5 max-h-screen overflow-y-auto">
         {posts.map((post) => {
           return (
             <Post
