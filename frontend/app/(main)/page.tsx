@@ -1,27 +1,34 @@
 "use client";
+import { useAuth } from "@/config/AuthProvider";
 import { getPosts } from "@/entities/post/api/postApi";
 import { IPost } from "@/entities/post/model/types";
 import { Post } from "@/entities/post/ui/post";
 import CreatePostForm from "@/features/create-post/ui/create-post-form";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [isCreating, setIsCreating] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const handleCreating = () => {
+    if (!isAuthenticated) {
+      router.push("auth");
+    }
     setIsCreating((prev) => !prev);
   };
 
   const fetchPots = async () => {
     const response: IPost[] = await getPosts();
-    // const data: IPost[] = await response.json();
+    console.log(response);
     setPosts(response);
   };
 
   useEffect(() => {
     fetchPots();
-  }, []);
+  }, [isCreating]);
 
   return (
     <div className="w-full h-screen  flex flex-col gap-5 max-h-screen overflow-y-auto">

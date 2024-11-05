@@ -1,5 +1,7 @@
 "use client";
+import { useAuth } from "@/config/AuthProvider";
 import { useState } from "react";
+import { createPost } from "../model/create-post";
 
 interface Props {
   toggleCreate?: () => void;
@@ -7,10 +9,17 @@ interface Props {
 
 export default function CreatePostForm({ toggleCreate }: Props) {
   const [text, setText] = useState("");
+  const { isAuthenticated, profile } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Логіка для обробки нового поста, наприклад, відправка даних на сервер
+    if (!isAuthenticated) {
+      throw new Error("cannot create post without auth");
+    }
+    if (profile) {
+      createPost({ user_id: profile.user_id, content: text });
+    }
     console.log("New post:", text);
     setText(""); // Очищення поля після відправки
     if (toggleCreate) {
@@ -33,7 +42,7 @@ export default function CreatePostForm({ toggleCreate }: Props) {
             onClick={toggleCreate}
             className="bg-gray-400 text-white font-semibold px-4 py-1 rounded-lg text-sm hover:bg-gray-300 hover:scale-[1.02]"
           >
-            Go back
+            Close
           </button>
           <button
             type="submit"

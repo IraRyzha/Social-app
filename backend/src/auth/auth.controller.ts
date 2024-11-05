@@ -2,7 +2,7 @@ import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
-// import { LoginDto } from './dto/login.dto';
+import { LoginDto } from './dto/login.dto';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('auth')
@@ -15,8 +15,8 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  //   @Post('login')
-  //   async login(@Body() loginDto: LoginDto) {
-  //     return this.authService.login(loginDto);
-  //   }
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
 }

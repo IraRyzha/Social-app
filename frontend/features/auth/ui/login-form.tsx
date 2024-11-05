@@ -7,7 +7,7 @@ export default function LoginForm() {
     email: "",
     password: "",
   });
-  const { login } = useAuth();
+  const { login, setProfile } = useAuth();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,6 +21,11 @@ export default function LoginForm() {
     try {
       const result = await loginUser(formData);
       console.log("User logged in:", result);
+      setProfile(result);
+      setFormData({
+        email: "",
+        password: "",
+      });
     } catch (error) {
       console.error("Login failed:", error);
     }

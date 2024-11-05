@@ -1,24 +1,25 @@
-import { Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { AuthHeaderInterceptor } from 'src/interceptors/auth-header.interceptor';
+// import { AuthHeaderInterceptor } from 'src/interceptors/auth-header.interceptor';
+import { CreatePostDto } from './dto/post.dto';
 
 @Controller('posts')
-@UseInterceptors(AuthHeaderInterceptor)
+// @UseInterceptors(AuthHeaderInterceptor)
 export class PostsController {
   constructor(private readonly userService: PostsService) {}
 
   @Post()
-  createPost() {
-    this.userService.createPost();
+  createPost(@Body() postDto: CreatePostDto) {
+    this.userService.createPost(postDto);
   }
 
   @Get()
-  getPosts() {
-    this.userService.getAllPosts();
+  async getPosts() {
+    return await this.userService.getAllPosts();
   }
 
   @Get('post/:id')
-  getPosr(@Param('id') id: number) {
+  getPost(@Param('id') id: number) {
     this.userService.getPost(id);
   }
 }

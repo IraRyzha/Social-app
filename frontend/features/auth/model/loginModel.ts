@@ -13,8 +13,9 @@ export async function loginUser(formData: LoginFormData) {
     if (!response.ok) {
       throw new Error("Login failed");
     }
-    console.error(response.json());
-    return response.json();
+    const data = await response.json();
+    console.error(data);
+    return data;
   } catch (error) {
     console.error("Error during login:", error);
     throw error;
