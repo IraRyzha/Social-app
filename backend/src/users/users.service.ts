@@ -43,7 +43,7 @@ export class UsersService {
       id: profileResult.rows[0].id,
       user_id: userId,
       user_name: profileResult.rows[0].user_name,
-      avatar_url: profileResult.rows[0].avatar_url || null, // за замовчуванням може бути null, якщо не встановлено
+      avatar_name: profileResult.rows[0].avatar_url || null, // за замовчуванням може бути null, якщо не встановлено
       status: profileResult.rows[0].status || 'offline', // статус за замовчуванням
       bio: profileResult.rows[0].bio,
       followers_count: profileResult.rows[0].followers_count || 0,

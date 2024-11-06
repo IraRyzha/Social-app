@@ -1,7 +1,13 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { registerUser } from "../model/registrationModel";
 import { RegisterFormData } from "../model/types";
 import { useAuth } from "@/config/AuthProvider";
+import userImage from "../../../shared/images/userImage.png";
+import sunImage from "../../../shared/images/sunImage.jpeg";
+import sproutImage from "../../../shared/images/sproutImage.png";
+import fireImage from "../../../shared/images/fireImage.jpeg";
+import rainbowImage from "../../../shared/images/rainbowImage.png";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -9,8 +15,23 @@ export default function RegistrationForm() {
     email: "",
     password: "",
     bio: "",
+    avatar_name: "user",
   });
+  const [selectedAvatar, setSelectedAvatar] = useState("");
   const { login, setProfile } = useAuth();
+
+  const avatars = [
+    { name: "user", image: userImage },
+    { name: "sun", image: sunImage },
+    { name: "sprout", image: sproutImage },
+    { name: "fire", image: fireImage },
+    { name: "rainbow", image: rainbowImage },
+  ];
+
+  const handleAvatarSelect = (avatarUrl: string) => {
+    setSelectedAvatar(avatarUrl);
+    setFormData((prev) => ({ ...prev, avatar_url: avatarUrl }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,6 +53,7 @@ export default function RegistrationForm() {
         email: "",
         password: "",
         bio: "",
+        avatar_name: "user",
       });
     } catch (error) {
       console.error("Registration failed:", error);
@@ -42,8 +64,28 @@ export default function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="avatar-selection mb-4">
+        <span className="text-gray-700">Choose an Avatar</span>
+        <div className="flex space-x-4 mt-2">
+          {avatars.map((avatar) => (
+            <Image
+              key={avatar.name}
+              src={avatar.image}
+              width={100}
+              height={100}
+              onClick={() => handleAvatarSelect(avatar.name)}
+              className={`w-16 h-16 cursor-pointer rounded-full border-2 ${
+                selectedAvatar === avatar.name
+                  ? "border-main-blue"
+                  : "border-gray-300"
+              }`}
+              alt={`${avatar.name} Avatar`}
+            />
+          ))}
+        </div>
+      </div>
       <label className="block">
-        <span className="text-gray-700">Full Name</span>
+        <span className="text-gray-700">Username</span>
         <input
           type="text"
           name="username"

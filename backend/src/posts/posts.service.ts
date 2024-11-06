@@ -24,7 +24,7 @@ export class PostsService {
         posts.created_at AS date,
         users.id AS user_id,
         profiles.user_name AS name,
-        profiles.avatar_url AS photo,
+        profiles.avatar_name AS photo,
         profiles.posts_count AS flashs
       FROM posts
       JOIN users ON posts.user_id = users.id

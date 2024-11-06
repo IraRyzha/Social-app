@@ -1,5 +1,18 @@
 import { FlashCoin } from "@/shared/ui/icons";
 import Image from "next/image";
+import userImage from "../../../shared/images/userImage.png";
+import sunImage from "../../../shared/images/sunImage.jpeg";
+import sproutImage from "../../../shared/images/sproutImage.png";
+import fireImage from "../../../shared/images/fireImage.jpeg";
+import rainbowImage from "../../../shared/images/rainbowImage.png";
+
+const avatars = [
+  { name: "user", image: userImage },
+  { name: "sun", image: sunImage },
+  { name: "sprout", image: sproutImage },
+  { name: "fire", image: fireImage },
+  { name: "rainbow", image: rainbowImage },
+];
 
 interface Props {
   user: {
@@ -26,12 +39,15 @@ export const Post = ({ user, text, date, flashs }: Props) => {
     const days = Math.floor(hours / 24);
     return `${days} days ago`;
   };
+
+  const postOwnerAvatar = avatars.find((avatar) => (avatar.name = user.photo));
+
   return (
     <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">
       <div className="w-full flex flex-1 justify-between">
         <div className="flex flex-1 items-center">
           <Image
-            src={user.photo}
+            src={postOwnerAvatar ? postOwnerAvatar.image : userImage}
             alt={`${user.name}'s profile`}
             className="w-10 h-10 rounded-full mr-3"
             width={35}

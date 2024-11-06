@@ -16,7 +16,7 @@ export default function Profile() {
           alt="Profile Picture"
           width={96}
           height={96}
-          className="object-cover"
+          className="object-cover rounded-full"
         />
       </div>
     );

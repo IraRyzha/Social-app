@@ -47,7 +47,7 @@ export default function Home() {
         {posts.map((post) => {
           return (
             <Post
-              key={post.user.name}
+              key={post.id}
               user={post.user}
               text={post.text}
               date={post.date}

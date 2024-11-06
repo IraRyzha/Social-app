@@ -13,7 +13,7 @@ CREATE TABLE profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   user_name VARCHAR(100),
-  avatar_url VARCHAR(255),
+  avatar_name VARCHAR(100),
   status VARCHAR(20) DEFAULT 'offline',
   bio TEXT,
   followers_count INT DEFAULT 0,
@@ -120,9 +120,11 @@ VALUES
 
 INSERT INTO profiles (user_id, user_name, avatar_url, status, bio, followers_count, following_count, posts_count, points)
 VALUES
-  ('11111111-1111-1111-1111-111111111111', 'User One', 'https://example.com/avatar1.png', 'online', 'Bio for user one', 10, 5, 3, 100),
-  ('22222222-2222-2222-2222-222222222222', 'User Two', 'https://example.com/avatar2.png', 'offline', 'Bio for user two', 15, 10, 2, 200),
-  ('33333333-3333-3333-3333-333333333333', 'User Three', 'https://example.com/avatar3.png', 'offline', 'Bio for user three', 8, 12, 4, 150);
+  ('11111111-1111-1111-1111-111111111111', 'tom', 'sun', 'online', 'Bio for user tom', 10, 5, 3, 100),
+  ('22222222-2222-2222-2222-222222222222', 'nina', 'rainbow', 'offline', 'Bio for user nina', 15, 10, 2, 200),
+  ('33333333-3333-3333-3333-333333333333', 'xxxoopppp', 'fire', 'offline', 'Bio for user xxxoopppp', 8, 12, 4, 150);
+  ('44444444-4444-4444-4444-444444444444', 'kit', 'sprout', 'offline', 'Bio for user kit', 5, 15, 3, 10);
+  ('55555555-5555-5555-5555-555555555555', 'noynaym', 'user', 'offline', 'Bio for user noynaym', 9, 2, 1, 35);
 
 INSERT INTO posts (user_id, content, created_at)
 VALUES
@@ -133,5 +135,5 @@ VALUES
   ('22222222-2222-2222-2222-222222222222', 'Another post by User Two.', '2024-11-05 13:00:00'),
   ('33333333-3333-3333-3333-333333333333', 'User Three is here!', '2024-11-05 09:00:00'),
   ('33333333-3333-3333-3333-333333333333', 'A second post by User Three.', '2024-11-05 11:30:00'),
-  ('33333333-3333-3333-3333-333333333333', 'User Three has more to say.', '2024-11-05 14:30:00'),
-  ('33333333-3333-3333-3333-333333333333', 'User Three final post for now.', '2024-11-05 16:00:00');
+  ('44444444-4444-4444-4444-444444444444', 'User Three has more to say.', '2024-11-05 14:30:00'),
+  ('55555555-5555-5555-5555-555555555555', 'User Three final post for now.', '2024-11-05 16:00:00');
