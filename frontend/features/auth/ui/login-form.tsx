@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { loginUser } from "../model/loginModel";
 import { useAuth } from "@/config/AuthProvider";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ export default function LoginForm() {
     password: "",
   });
   const { login, setProfile } = useAuth();
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,6 +28,7 @@ export default function LoginForm() {
         email: "",
         password: "",
       });
+      router.push("");
     } catch (error) {
       console.error("Login failed:", error);
     }

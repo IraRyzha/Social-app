@@ -1,6 +1,6 @@
+import { Profile } from "@/entities/profile";
 import Header from "@/shared/ui/header/header";
 import { Navigation } from "@/widgets/navigation";
-import { Profile } from "@/widgets/profile";
 
 export default function MainLayout({
   children,
@@ -16,7 +16,7 @@ export default function MainLayout({
         </div>
         <div className="w-full mx-5">{children}</div>
         <div className="w-1/3 h-auto">
-          <Profile />
+          <Profile type="base" />
         </div>
       </div>
     </div>

@@ -1,8 +1,8 @@
 "use client";
 import { useAuth } from "@/config/AuthProvider";
-import { getPosts } from "@/entities/post/api/postApi";
+import { getPosts } from "@/entities/post/index";
 import { IPost } from "@/entities/post/model/types";
-import { Post } from "@/entities/post/ui/post";
+import { Post } from "@/entities/post/index";
 import CreatePostForm from "@/features/create-post/ui/create-post-form";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

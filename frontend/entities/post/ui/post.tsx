@@ -1,12 +1,15 @@
-import { FlashCoin } from "@/shared/ui/icons";
 import Image from "next/image";
-import userImage from "../../../shared/images/userImage.png";
-import sunImage from "../../../shared/images/sunImage.jpeg";
-import sproutImage from "../../../shared/images/sproutImage.png";
-import fireImage from "../../../shared/images/fireImage.jpeg";
-import rainbowImage from "../../../shared/images/rainbowImage.png";
+import { FlashCoin } from "@/shared/ui/icons";
+import flashLogo from "@/shared/images/flashLogo.webp";
+import userImage from "@/shared/images/userImage.png";
+import sunImage from "@/shared/images/sunImage.jpeg";
+import sproutImage from "@/shared/images/sproutImage.jpeg";
+import fireImage from "@/shared/images/fireImage.jpeg";
+import rainbowImage from "@/shared/images/rainbowImage.jpeg";
+import { useRouter } from "next/navigation";
 
 const avatars = [
+  { name: "flash", image: flashLogo },
   { name: "user", image: userImage },
   { name: "sun", image: sunImage },
   { name: "sprout", image: sproutImage },
@@ -16,6 +19,7 @@ const avatars = [
 
 interface Props {
   user: {
+    id: string;
     name: string;
     photo: string;
   };
@@ -24,6 +28,8 @@ interface Props {
   flashs: number;
 }
 export const Post = ({ user, text, date, flashs }: Props) => {
+  const router = useRouter();
+
   const formatTimeAgo = (date: string | number) => {
     const dateInMillis = new Date(date).getTime();
 
@@ -40,12 +46,21 @@ export const Post = ({ user, text, date, flashs }: Props) => {
     return `${days} days ago`;
   };
 
-  const postOwnerAvatar = avatars.find((avatar) => (avatar.name = user.photo));
+  const postOwnerAvatar = avatars.find((avatar) => avatar.name === user.photo);
+
+  console.log(user);
+
+  const handlePostOwnerProfile = () => {
+    router.push(`users/${user.id}`);
+  };
 
   return (
     <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">
       <div className="w-full flex flex-1 justify-between">
-        <div className="flex flex-1 items-center">
+        <div
+          className="flex flex-1 items-center cursor-pointer"
+          onClick={handlePostOwnerProfile}
+        >
           <Image
             src={postOwnerAvatar ? postOwnerAvatar.image : userImage}
             alt={`${user.name}'s profile`}

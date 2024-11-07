@@ -3,7 +3,7 @@ interface RegisterFormData {
   email: string;
   password: string;
   bio: string;
-  avatar_name: "user" | "sun" | "sprout" | "fire" | "rainbow";
+  avatar_name: "" | "user" | "sun" | "sprout" | "fire" | "rainbow";
 }
 
 interface LoginFormData {

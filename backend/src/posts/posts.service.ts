@@ -20,6 +20,7 @@ export class PostsService {
       `
       SELECT 
         posts.id,
+        posts.user_id,
         posts.content AS text,
         posts.created_at AS date,
         users.id AS user_id,
@@ -37,6 +38,7 @@ export class PostsService {
     return postResult.rows.map((row) => ({
       id: row.id,
       user: {
+        id: row.user_id,
         name: row.name,
         photo: row.photo,
       },

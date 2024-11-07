@@ -1,5 +1,7 @@
+import { getPosts } from "./api/get-posts";
+import { getPostsByUserId } from "./api/get-user-posts";
 import { IPost } from "./model/types";
 import { Post } from "./ui/post";
 
 export type { IPost };
-export { Post };
+export { Post, getPosts, getPostsByUserId };

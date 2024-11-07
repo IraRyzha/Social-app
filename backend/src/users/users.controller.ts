@@ -16,8 +16,13 @@ export class UsersController {
     this.userService.getAllUsers();
   }
 
-  @Get('user/:id')
-  getUser(@Param('id') id: number) {
-    this.userService.getUser(id);
+  @Get(':id')
+  getUser(@Param('id') id: string) {
+    return this.userService.getProfile(id);
+  }
+
+  @Get(':id/posts')
+  getUserPosts(@Param('id') id: string) {
+    return this.userService.getPostsByUserId(id);
   }
 }

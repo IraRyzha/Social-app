@@ -1,33 +1,50 @@
 "use client";
 import Image from "next/image";
-import userImage from "@/shared/images/userImage.png";
-import flashLogo from "@/shared/images/flashLogo.webp";
 import { FlashCoin } from "@/shared/ui/icons";
 import { useAuth } from "@/config/AuthProvider";
+import flashLogo from "@/shared/images/flashLogo.webp";
+import userImage from "@/shared/images/userImage.png";
+import sunImage from "@/shared/images/sunImage.jpeg";
+import sproutImage from "@/shared/images/sproutImage.jpeg";
+import fireImage from "@/shared/images/fireImage.jpeg";
+import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 
-export default function Profile() {
+const avatars = [
+  { name: "flash", image: flashLogo },
+  { name: "user", image: userImage },
+  { name: "sun", image: sunImage },
+  { name: "sprout", image: sproutImage },
+  { name: "fire", image: fireImage },
+  { name: "rainbow", image: rainbowImage },
+];
+
+export default function BaseProfile() {
   const { isAuthenticated, profile } = useAuth();
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !profile) {
     return (
       <div className="w-full h-auto px-11 py-8 flex flex-col items-center justify-center gap-5 rounded-xl bg-white shadow">
         <Image
           src={userImage}
           alt="Profile Picture"
-          width={96}
-          height={96}
+          width={100}
+          height={100}
           className="object-cover rounded-full"
         />
       </div>
     );
   }
 
+  const profileAvatar = avatars.find(
+    (avatar) => avatar.name === profile.avatar_name
+  );
+
   return (
     <div className="w-full h-auto px-11 py-8 flex flex-col items-start justify-center gap-5 rounded-xl bg-white shadow">
       <div className="w-full h-auto flex flex-col items-center gap-2">
         <div className="w-24 h-24 rounded-full overflow-hidden">
           <Image
-            src={flashLogo}
+            src={profileAvatar ? profileAvatar.image : userImage}
             alt="Profile Picture"
             width={96}
             height={96}

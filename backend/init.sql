@@ -112,28 +112,35 @@ CREATE TABLE loan_repayments (
 );
 
 -- Вставка тестових даних
+-- Вставка тестових даних
 INSERT INTO users (id, email, password_hash)
 VALUES
-  ('11111111-1111-1111-1111-111111111111', 'user1@example.com', 'hashedpassword1'),
-  ('22222222-2222-2222-2222-222222222222', 'user2@example.com', 'hashedpassword2'),
-  ('33333333-3333-3333-3333-333333333333', 'user3@example.com', 'hashedpassword3');
+  ('11111111-1111-1111-1111-111111111111', 'tom@example.com', 'hashedpassword1'),
+  ('22222222-2222-2222-2222-222222222222', 'nina@example.com', 'hashedpassword2'),
+  ('33333333-3333-3333-3333-333333333333', 'user3@example.com', 'hashedpassword3'),
+  ('44444444-4444-4444-4444-444444444444', 'xxxoopppp@example.com', 'hashedpassword4'),
+  ('55555555-5555-5555-5555-555555555555', 'noynaym@example.com', 'hashedpassword5'),
+  ('66666666-6666-6666-6666-666666666666', 'user@example.com', 'hashedpassword6');
 
-INSERT INTO profiles (user_id, user_name, avatar_url, status, bio, followers_count, following_count, posts_count, points)
+INSERT INTO profiles (user_id, user_name, avatar_name, status, bio, followers_count, following_count, posts_count, points)
 VALUES
   ('11111111-1111-1111-1111-111111111111', 'tom', 'sun', 'online', 'Bio for user tom', 10, 5, 3, 100),
   ('22222222-2222-2222-2222-222222222222', 'nina', 'rainbow', 'offline', 'Bio for user nina', 15, 10, 2, 200),
-  ('33333333-3333-3333-3333-333333333333', 'xxxoopppp', 'fire', 'offline', 'Bio for user xxxoopppp', 8, 12, 4, 150);
-  ('44444444-4444-4444-4444-444444444444', 'kit', 'sprout', 'offline', 'Bio for user kit', 5, 15, 3, 10);
-  ('55555555-5555-5555-5555-555555555555', 'noynaym', 'user', 'offline', 'Bio for user noynaym', 9, 2, 1, 35);
+  ('33333333-3333-3333-3333-333333333333', 'xxxoopppp', 'fire', 'offline', 'Bio for user xxxoopppp', 8, 12, 4, 150),
+  ('44444444-4444-4444-4444-444444444444', 'kit', 'sprout', 'offline', 'Bio for user kit', 5, 15, 3, 10),
+  ('55555555-5555-5555-5555-555555555555', 'noynaym', 'user', 'offline', 'Bio for user noynaym', 9, 2, 1, 35),
+  ('66666666-6666-6666-6666-666666666666', 'user', 'user', 'offline', 'Bio for user 6666', 1, 1, 1, 1);
 
 INSERT INTO posts (user_id, content, created_at)
 VALUES
-  ('11111111-1111-1111-1111-111111111111', 'This is the first post by User One.', '2024-11-05 10:00:00'),
-  ('11111111-1111-1111-1111-111111111111', 'Another post by User One.', '2024-11-05 12:00:00'),
-  ('11111111-1111-1111-1111-111111111111', 'User One is posting again.', '2024-11-05 14:00:00'),
-  ('22222222-2222-2222-2222-222222222222', 'User Two first post.', '2024-11-05 11:00:00'),
-  ('22222222-2222-2222-2222-222222222222', 'Another post by User Two.', '2024-11-05 13:00:00'),
-  ('33333333-3333-3333-3333-333333333333', 'User Three is here!', '2024-11-05 09:00:00'),
-  ('33333333-3333-3333-3333-333333333333', 'A second post by User Three.', '2024-11-05 11:30:00'),
-  ('44444444-4444-4444-4444-444444444444', 'User Three has more to say.', '2024-11-05 14:30:00'),
-  ('55555555-5555-5555-5555-555555555555', 'User Three final post for now.', '2024-11-05 16:00:00');
+  ('11111111-1111-1111-1111-111111111111', 'This is the first post by tom.', '2024-11-05 10:00:00'),
+  ('11111111-1111-1111-1111-111111111111', 'Another post by tom.', '2024-11-05 12:00:00'),
+  ('11111111-1111-1111-1111-111111111111', 'tom is posting again.', '2024-11-05 14:00:00'),
+  ('22222222-2222-2222-2222-222222222222', 'nina first post.', '2024-11-05 11:00:00'),
+  ('22222222-2222-2222-2222-222222222222', 'Another post by nina.', '2024-11-05 13:00:00'),
+  ('33333333-3333-3333-3333-333333333333', 'xxxoopppp is here!', '2024-11-05 09:00:00'),
+  ('33333333-3333-3333-3333-333333333333', 'A second post by xxxoopppp.', '2024-11-05 11:30:00'),
+  ('44444444-4444-4444-4444-444444444444', 'kit has more to say.', '2024-11-05 14:30:00'),
+  ('55555555-5555-5555-5555-555555555555', 'noynaym post for now.', '2024-11-05 16:00:00'),
+  ('66666666-6666-6666-6666-666666666666', 'user post for now.', '2024-11-06 17:00:00');
+

@@ -1,6 +1,7 @@
 interface IPost {
   id: string;
   user: {
+    id: string;
     name: string;
     photo: string;
   };

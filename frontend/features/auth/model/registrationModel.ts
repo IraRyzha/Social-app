@@ -12,7 +12,7 @@ export async function registerUser(formData: RegisterFormData) {
       }
     );
     const data = await response.json();
-    console.error(data);
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error during registration:", error);

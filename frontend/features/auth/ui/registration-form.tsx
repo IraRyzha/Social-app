@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { registerUser } from "../model/registrationModel";
 import { RegisterFormData } from "../model/types";
 import { useAuth } from "@/config/AuthProvider";
@@ -8,6 +8,7 @@ import sunImage from "../../../shared/images/sunImage.jpeg";
 import sproutImage from "../../../shared/images/sproutImage.jpeg";
 import fireImage from "../../../shared/images/fireImage.jpeg";
 import rainbowImage from "../../../shared/images/rainbowImage.jpeg";
+import { useRouter } from "next/navigation";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -15,12 +16,16 @@ export default function RegistrationForm() {
     email: "",
     password: "",
     bio: "",
-    avatar_name: "user",
+    avatar_name: "",
   });
   const [selectedAvatar, setSelectedAvatar] = useState("");
   const { login, setProfile } = useAuth();
+  const router = useRouter();
 
-  const avatars = [
+  const avatars: {
+    name: RegisterFormData["avatar_name"];
+    image: StaticImageData;
+  }[] = [
     { name: "user", image: userImage },
     { name: "sun", image: sunImage },
     { name: "sprout", image: sproutImage },
@@ -28,9 +33,9 @@ export default function RegistrationForm() {
     { name: "rainbow", image: rainbowImage },
   ];
 
-  const handleAvatarSelect = (avatarUrl: string) => {
+  const handleAvatarSelect = (avatarUrl: RegisterFormData["avatar_name"]) => {
     setSelectedAvatar(avatarUrl);
-    setFormData((prev) => ({ ...prev, avatar_url: avatarUrl }));
+    setFormData((prev) => ({ ...prev, avatar_name: avatarUrl }));
   };
 
   const handleChange = (
@@ -43,6 +48,7 @@ export default function RegistrationForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      console.log("formData before request:", formData);
       const result = await registerUser(formData);
       console.log("User registered:", result);
       console.log(result.profile);
@@ -53,8 +59,9 @@ export default function RegistrationForm() {
         email: "",
         password: "",
         bio: "",
-        avatar_name: "user",
+        avatar_name: "",
       });
+      router.push("");
     } catch (error) {
       console.error("Registration failed:", error);
       window.alert("Registration failed");

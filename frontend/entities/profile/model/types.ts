@@ -2,7 +2,7 @@ interface IProfile {
   id: string;
   user_id: string; // ID користувача, що з'єднаний з профілем
   user_name: string; // Ім'я користувача
-  avatar_url: string; // URL аватара користувача
+  avatar_name: string; // URL аватара користувача
   status: string; // Статус користувача, наприклад "online" або "offline"
   bio: string; // Біографія користувача
   followers_count: number; // Кількість підписників

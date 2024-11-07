@@ -7,7 +7,7 @@ export class UsersService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async createUser(registerDto) {
-    const { email, password, username, bio } = registerDto;
+    const { email, password, username, bio, avatar_name } = registerDto;
 
     const existingUserResult = await this.databaseService.query(
       `SELECT id FROM users WHERE email = $1`,
@@ -31,8 +31,8 @@ export class UsersService {
 
     // 2. Створення профілю для користувача в таблиці profiles
     const profileResult = await this.databaseService.query(
-      `INSERT INTO profiles (user_id, user_name, bio) VALUES ($1, $2, $3) RETURNING *`,
-      [userId, username, bio]
+      `INSERT INTO profiles (user_id, user_name, bio, avatar_name) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [userId, username, bio, avatar_name]
     );
 
     // 3. Перевірка, чи записано профіль правильн
@@ -95,11 +95,45 @@ export class UsersService {
     return result.rows;
   }
 
-  async getUser(id: number) {
+  async getProfile(id: string) {
     const result = await this.databaseService.query(
-      'SELECT * FROM users WHERE id = $1',
+      'SELECT * FROM profiles WHERE user_id = $1',
       [id]
     );
     return result.rows[0];
+  }
+
+  async getPostsByUserId(id: string) {
+    const postResult = await this.databaseService.query(
+      `
+      SELECT 
+        posts.id AS post_id,
+        posts.content AS text,
+        posts.created_at AS date,
+        users.id AS user_id,
+        profiles.user_name AS name,
+        profiles.avatar_name AS photo,
+        profiles.posts_count AS flashs
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      JOIN profiles ON profiles.user_id = users.id
+      WHERE users.id = $1
+      ORDER BY posts.created_at DESC;
+      `,
+      [id]
+    );
+
+    // Трансформуємо дані в масив об'єктів, що відповідають структурі IPost
+    return postResult.rows.map((row) => ({
+      id: row.post_id,
+      user: {
+        id: row.user_id,
+        name: row.name,
+        photo: row.photo,
+      },
+      text: row.text,
+      date: row.date,
+      flashs: row.flashs || 0, // значення за замовчуванням, якщо немає
+    }));
   }
 }
