@@ -5,9 +5,9 @@ import { RegisterFormData } from "../model/types";
 import { useAuth } from "@/config/AuthProvider";
 import userImage from "../../../shared/images/userImage.png";
 import sunImage from "../../../shared/images/sunImage.jpeg";
-import sproutImage from "../../../shared/images/sproutImage.png";
+import sproutImage from "../../../shared/images/sproutImage.jpeg";
 import fireImage from "../../../shared/images/fireImage.jpeg";
-import rainbowImage from "../../../shared/images/rainbowImage.png";
+import rainbowImage from "../../../shared/images/rainbowImage.jpeg";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
