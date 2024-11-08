@@ -2,6 +2,7 @@
 import { useAuth } from "@/config/AuthProvider";
 import { useState } from "react";
 import { createPost } from "../model/create-post";
+import Button from "@/shared/ui/button/button";
 
 interface Props {
   toggleCreate?: () => void;
@@ -38,18 +39,12 @@ export default function CreatePostForm({ toggleCreate }: Props) {
           rows={3}
         />
         <div className="flex items-center justify-end gap-2 mt-1">
-          <button
-            onClick={toggleCreate}
-            className="bg-gray-400 text-white font-semibold px-4 py-1 rounded-lg text-sm hover:bg-gray-300 hover:scale-[1.02]"
-          >
+          <Button size="small" color="gray" text="small" onClick={toggleCreate}>
             Close
-          </button>
-          <button
-            type="submit"
-            className="bg-main-blue text-white font-semibold px-4 py-1 rounded-lg text-sm hover:bg-main-blue-dark hover:scale-[1.02]"
-          >
+          </Button>
+          <Button buttonType="submit" size="small" color="blue" text="small">
             Post
-          </button>
+          </Button>
         </div>
       </form>
     </div>

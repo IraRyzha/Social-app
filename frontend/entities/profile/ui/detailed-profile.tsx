@@ -8,6 +8,7 @@ import sproutImage from "@/shared/images/sproutImage.jpeg";
 import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { IProfile } from "@/entities/profile";
+import Button from "@/shared/ui/button/button";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -18,7 +19,13 @@ const avatars = [
   { name: "rainbow", image: rainbowImage },
 ];
 
-export default function DetailedProfile({ profile }: { profile: IProfile }) {
+export default function DetailedProfile({
+  profile,
+  isOwn,
+}: {
+  profile: IProfile;
+  isOwn: boolean;
+}) {
   const profileAvatar = avatars.find(
     (avatar) => avatar.name === profile.avatar_name
   );
@@ -79,6 +86,27 @@ export default function DetailedProfile({ profile }: { profile: IProfile }) {
           {new Date(profile.updated_at).toLocaleDateString()}
         </p>
       </div>
+
+      {!isOwn && (
+        <div className="mt-6 flex gap-2 justify-center">
+          <Button
+            size="medium"
+            color="blue"
+            text="small"
+            // onClick={handleCreating}
+          >
+            Follow
+          </Button>
+          <Button
+            size="medium"
+            color="gray"
+            text="small"
+            // onClick={handleCreating}
+          >
+            Message
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

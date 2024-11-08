@@ -3,10 +3,12 @@ import { getProfile, IProfile, Profile } from "@/entities/profile";
 import { getPostsByUserId, IPost, Post } from "@/entities/post";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/config/AuthProvider";
 
 export default function UserProfile() {
-  const [profile, setProfile] = useState<IProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<IProfile | null>(null);
   const [posts, setPosts] = useState<IPost[] | null>(null);
+  const { profile } = useAuth();
 
   const params = useParams();
   const router = useRouter();
@@ -16,7 +18,7 @@ export default function UserProfile() {
   const fetchProfile = async () => {
     const response: IProfile = await getProfile(params.id as string);
     console.log(response);
-    setProfile(response);
+    setUserProfile(response);
   };
 
   const fetchUserPosts = async () => {
@@ -30,7 +32,7 @@ export default function UserProfile() {
     fetchUserPosts();
   }, []);
 
-  if (!profile) {
+  if (!userProfile || !profile) {
     return <h3>Not found</h3>;
   }
 
@@ -44,7 +46,11 @@ export default function UserProfile() {
         ← Back
       </button>
 
-      <Profile type="detailed" profile={profile} />
+      <Profile
+        type="detailed"
+        profile={userProfile}
+        isOwn={profile.id === userProfile.id}
+      />
 
       {/* Пости */}
       <div className="max-w-3xl w-full mt-10 flex flex-col gap-5">

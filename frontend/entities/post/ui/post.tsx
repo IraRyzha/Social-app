@@ -7,6 +7,7 @@ import sproutImage from "@/shared/images/sproutImage.jpeg";
 import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/config/AuthProvider";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -29,6 +30,7 @@ interface Props {
 }
 export const Post = ({ user, text, date, flashs }: Props) => {
   const router = useRouter();
+  const { profile } = useAuth();
 
   const formatTimeAgo = (date: string | number) => {
     const dateInMillis = new Date(date).getTime();
@@ -48,9 +50,11 @@ export const Post = ({ user, text, date, flashs }: Props) => {
 
   const postOwnerAvatar = avatars.find((avatar) => avatar.name === user.photo);
 
-  console.log(user);
-
   const handlePostOwnerProfile = () => {
+    if (!profile) {
+      router.push("auth");
+      return;
+    }
     router.push(`users/${user.id}`);
   };
 
