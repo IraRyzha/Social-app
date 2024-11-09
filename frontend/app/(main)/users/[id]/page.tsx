@@ -13,8 +13,6 @@ export default function UserProfile() {
   const params = useParams();
   const router = useRouter();
 
-  console.log(params.id);
-
   const fetchProfile = async () => {
     const response: IProfile = await getProfile(params.id as string);
     console.log(response);
@@ -23,6 +21,7 @@ export default function UserProfile() {
 
   const fetchUserPosts = async () => {
     const response: IPost[] = await getPostsByUserId(params.id as string);
+    console.log("fetchUserPosts");
     console.log(response);
     setPosts(response);
   };
@@ -32,13 +31,17 @@ export default function UserProfile() {
     fetchUserPosts();
   }, []);
 
-  if (!userProfile || !profile) {
+  if (!profile) {
+    router.push("auth");
+    return;
+  }
+
+  if (!userProfile) {
     return <h3>Not found</h3>;
   }
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center p-3">
-      {/* Кнопка назад */}
       <button
         onClick={() => router.back()}
         className="self-start mb-3 text-main-blue-light hover:underline flex items-center text-sm font-semibold"
@@ -52,7 +55,6 @@ export default function UserProfile() {
         isOwn={profile.id === userProfile.id}
       />
 
-      {/* Пости */}
       <div className="max-w-3xl w-full mt-10 flex flex-col gap-5">
         {posts ? (
           posts.map((post) => (
@@ -62,6 +64,7 @@ export default function UserProfile() {
               text={post.text}
               date={post.date}
               flashs={post.flashs}
+              categories={post.categories}
             />
           ))
         ) : (

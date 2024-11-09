@@ -8,6 +8,7 @@ import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/config/AuthProvider";
+import { TCategory } from "@/shared/types/types";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -27,8 +28,9 @@ interface Props {
   text: string;
   date: string;
   flashs: number;
+  categories: TCategory[] | null;
 }
-export const Post = ({ user, text, date, flashs }: Props) => {
+export const Post = ({ user, text, date, flashs, categories }: Props) => {
   const router = useRouter();
   const { profile } = useAuth();
 
@@ -83,6 +85,20 @@ export const Post = ({ user, text, date, flashs }: Props) => {
         </div>
       </div>
       <p className="text-gray-700 text-sm mt-3">{text}</p>
+
+      {/* Відображення категорій як хештеги */}
+      {categories && categories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-3">
+          {categories.map((category) => (
+            <span
+              key={category}
+              className="text-xs text-main-blue bg-main-blue-light bg-opacity-10 rounded-full px-2 py-1"
+            >
+              #{category}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

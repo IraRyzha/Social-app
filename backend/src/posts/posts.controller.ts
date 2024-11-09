@@ -20,6 +20,7 @@ export class PostsController {
 
   @Get('friends')
   async getFriendsPosts(@Query('userId') userId: string) {
+    console.log('search friends post user with id' + userId);
     return this.postsService.getFriendsPosts(userId);
   }
 

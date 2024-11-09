@@ -1,3 +1,5 @@
+import { TCategory } from "@/shared/types/types";
+
 interface IPost {
   id: string;
   user: {
@@ -8,6 +10,7 @@ interface IPost {
   text: string; // Основний текст поста
   date: string; // Дата публікації, можна використовувати Date, якщо потрібне форматування
   flashs: number;
+  categories: TCategory[] | [];
 }
 
 export type { IPost };

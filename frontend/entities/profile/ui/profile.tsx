@@ -13,7 +13,7 @@ export function Profile({ type, profile, isOwn }: Props) {
     <>
       {type === "base" && <BaseProfile />}
       {type === "detailed" && profile && (
-        <DetailedProfile profile={profile} isOwn={isOwn ?? false} />
+        <DetailedProfile userProfile={profile} isOwn={isOwn ?? false} />
       )}
     </>
   );

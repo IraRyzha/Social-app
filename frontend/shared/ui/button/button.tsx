@@ -25,7 +25,7 @@ export default function Button({
 
   const colorClasses = {
     blue: "bg-main-blue hover:bg-main-blue-light text-white",
-    gray: "bg-gray-500 hover:bg-gray-600 text-white",
+    gray: "bg-gray-400 hover:bg-gray-500 text-white",
     white: "bg-white hover:bg-gray-300 text-black",
   };
 

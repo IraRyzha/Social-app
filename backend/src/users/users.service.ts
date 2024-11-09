@@ -113,17 +113,21 @@ export class UsersService {
         users.id AS user_id,
         profiles.user_name AS name,
         profiles.avatar_name AS photo,
-        profiles.posts_count AS flashs
+        profiles.posts_count AS flashs,
+        ARRAY_AGG(categories.name) AS categories
       FROM posts
       JOIN users ON posts.user_id = users.id
       JOIN profiles ON profiles.user_id = users.id
+      LEFT JOIN post_categories ON posts.id = post_categories.post_id
+      LEFT JOIN categories ON post_categories.category_id = categories.id
       WHERE users.id = $1
+      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name, profiles.posts_count
       ORDER BY posts.created_at DESC;
       `,
       [id]
     );
 
-    // Трансформуємо дані в масив об'єктів, що відповідають структурі IPost
+    // Формування відповіді, що включає категорії
     return postResult.rows.map((row) => ({
       id: row.post_id,
       user: {
@@ -133,7 +137,71 @@ export class UsersService {
       },
       text: row.text,
       date: row.date,
-      flashs: row.flashs || 0, // значення за замовчуванням, якщо немає
+      flashs: row.flashs || 0,
+      categories: row.categories || [], // Список категорій
     }));
+  }
+
+  async checkIsFollowing(userId: string, followerId: string) {
+    const result = await this.databaseService.query(
+      `SELECT 1 FROM followers WHERE user_id = $1 AND follower_id = $2`,
+      [userId, followerId]
+    );
+    return { isFollowing: result.rows.length > 0 };
+  }
+
+  async followUser(userId: string, followerId: string) {
+    if (userId === followerId) {
+      throw new Error('User cannot follow themselves.');
+    }
+
+    // Перевіряємо, чи вже існує підписка
+    const existingFollow = await this.databaseService.query(
+      `SELECT * FROM followers WHERE user_id = $1 AND follower_id = $2`,
+      [userId, followerId]
+    );
+
+    if (existingFollow.rows.length > 0) {
+      throw new Error('Already following this user.');
+    }
+
+    // Додаємо запис у таблицю followers
+    await this.databaseService.query(
+      `INSERT INTO followers (user_id, follower_id) VALUES ($1, $2)`,
+      [userId, followerId]
+    );
+
+    // Оновлюємо кількість підписників у профілі користувача
+    await this.databaseService.query(
+      `UPDATE profiles SET followers_count = followers_count + 1 WHERE user_id = $1`,
+      [userId]
+    );
+
+    // Оновлюємо кількість підписок у профілі підписника
+    await this.databaseService.query(
+      `UPDATE profiles SET following_count = following_count + 1 WHERE user_id = $1`,
+      [followerId]
+    );
+
+    return { message: 'Successfully followed user.' };
+  }
+
+  async unfollowUser(userId: string, followerId: string) {
+    await this.databaseService.query(
+      `DELETE FROM followers WHERE user_id = $1 AND follower_id = $2`,
+      [userId, followerId]
+    );
+
+    // Оновлюємо лічильники
+    await this.databaseService.query(
+      `UPDATE profiles SET followers_count = followers_count - 1 WHERE user_id = $1`,
+      [userId]
+    );
+    await this.databaseService.query(
+      `UPDATE profiles SET following_count = following_count - 1 WHERE user_id = $1`,
+      [followerId]
+    );
+
+    return { message: 'Successfully unfollowed user.' };
   }
 }

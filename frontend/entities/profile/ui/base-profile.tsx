@@ -27,8 +27,8 @@ export default function BaseProfile() {
         <Image
           src={userImage}
           alt="Profile Picture"
-          width={100}
-          height={100}
+          width={80}
+          height={80}
           className="object-cover rounded-full"
         />
       </div>
@@ -42,12 +42,12 @@ export default function BaseProfile() {
   return (
     <div className="w-full h-auto px-11 py-8 flex flex-col items-start justify-center gap-5 rounded-xl bg-white shadow">
       <div className="w-full h-auto flex flex-col items-center gap-2">
-        <div className="w-24 h-24 rounded-full overflow-hidden">
+        <div className="w-auto h-auto rounded-full overflow-hidden">
           <Image
             src={profileAvatar ? profileAvatar.image : userImage}
             alt="Profile Picture"
-            width={96}
-            height={96}
+            width={100}
+            height={100}
             className="object-cover"
           />
         </div>

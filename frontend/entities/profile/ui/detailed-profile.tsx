@@ -9,6 +9,11 @@ import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { IProfile } from "@/entities/profile";
 import Button from "@/shared/ui/button/button";
+import { followUser } from "../api/follow-user";
+import { useAuth } from "@/config/AuthProvider";
+import { useEffect, useState } from "react";
+import { unfollowUser } from "../api/unfollow-user";
+import { checkFollowing } from "../api/check-following";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -20,15 +25,48 @@ const avatars = [
 ];
 
 export default function DetailedProfile({
-  profile,
+  userProfile,
   isOwn,
 }: {
-  profile: IProfile;
+  userProfile: IProfile;
   isOwn: boolean;
 }) {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { profile } = useAuth();
+
   const profileAvatar = avatars.find(
-    (avatar) => avatar.name === profile.avatar_name
+    (avatar) => avatar.name === userProfile.avatar_name
   );
+
+  useEffect(() => {
+    // Перевіряємо статус підписки при завантаженні компонента
+    const fetchFollowStatus = async () => {
+      if (profile) {
+        const followingStatus = await checkFollowing(
+          profile.user_id,
+          userProfile.user_id
+        );
+        setIsFollowing(followingStatus);
+      }
+    };
+    fetchFollowStatus();
+  }, [profile, userProfile.user_id]);
+
+  const handleFollow = async () => {
+    if (profile) {
+      await followUser(profile.user_id, userProfile.user_id);
+      setIsFollowing(true);
+    } else {
+      window.alert("need login for follow users");
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (profile) {
+      await unfollowUser(profile.user_id, userProfile.user_id);
+      setIsFollowing(false);
+    }
+  };
 
   return (
     <div className="max-w-lg w-full bg-white shadow-md rounded-xl p-6 text-center">
@@ -44,30 +82,30 @@ export default function DetailedProfile({
       </div>
 
       {/* Ім'я та статус */}
-      <h2 className="text-2xl font-semibold mb-1">{profile.user_name}</h2>
+      <h2 className="text-2xl font-semibold mb-1">{userProfile.user_name}</h2>
       <p
         className={`text-sm ${
-          profile.status === "online" ? "text-green-500" : "text-gray-500"
+          userProfile.status === "online" ? "text-green-500" : "text-gray-500"
         }`}
       >
-        {profile.status.charAt(0) + profile.status.slice(1)}
+        {userProfile.status.charAt(0) + userProfile.status.slice(1)}
       </p>
 
       {/* Біографія */}
-      <p className="text-sm text-gray-600 mt-2">{profile.bio}</p>
+      <p className="text-sm text-gray-600 mt-2">{userProfile.bio}</p>
 
       {/* Додаткова інформація */}
       <div className="flex justify-around items-center mt-4">
         <div>
-          <p className="text-lg font-semibold">{profile.followers_count}</p>
+          <p className="text-lg font-semibold">{userProfile.followers_count}</p>
           <p className="text-sm text-gray-500">Followers</p>
         </div>
         <div>
-          <p className="text-lg font-semibold">{profile.following_count}</p>
+          <p className="text-lg font-semibold">{userProfile.following_count}</p>
           <p className="text-sm text-gray-500">Following</p>
         </div>
         <div>
-          <p className="text-lg font-semibold">{profile.posts_count}</p>
+          <p className="text-lg font-semibold">{userProfile.posts_count}</p>
           <p className="text-sm text-gray-500">Posts</p>
         </div>
       </div>
@@ -75,33 +113,44 @@ export default function DetailedProfile({
       {/* Очки і дати */}
       <div className="mt-6">
         <p className="text-sm">
-          <span className="font-semibold">Points:</span> {profile.points}
+          <span className="font-semibold">Points:</span> {userProfile.points}
         </p>
         <p className="text-sm">
           <span className="font-semibold">Created at:</span>{" "}
-          {new Date(profile.created_at).toLocaleDateString()}
+          {new Date(userProfile.created_at).toLocaleDateString()}
         </p>
         <p className="text-sm">
           <span className="font-semibold">Last updated:</span>{" "}
-          {new Date(profile.updated_at).toLocaleDateString()}
+          {new Date(userProfile.updated_at).toLocaleDateString()}
         </p>
       </div>
 
       {!isOwn && (
         <div className="mt-6 flex gap-2 justify-center">
-          <Button
-            size="medium"
-            color="blue"
-            text="small"
-            // onClick={handleCreating}
-          >
-            Follow
-          </Button>
+          {isFollowing ? (
+            <Button
+              size="medium"
+              color="gray"
+              text="small"
+              onClick={handleUnfollow}
+            >
+              Unfollow
+            </Button>
+          ) : (
+            <Button
+              size="medium"
+              color="blue"
+              text="small"
+              onClick={handleFollow}
+            >
+              Follow
+            </Button>
+          )}
           <Button
             size="medium"
             color="gray"
             text="small"
-            // onClick={handleCreating}
+            // onClick={handleMessage}
           >
             Message
           </Button>

@@ -97,6 +97,7 @@ export default function Home() {
               text={post.text}
               date={post.date}
               flashs={post.flashs}
+              categories={post.categories}
             />
           );
         })}
