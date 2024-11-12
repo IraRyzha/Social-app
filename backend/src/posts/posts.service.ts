@@ -54,7 +54,6 @@ export class PostsService {
   }
 
   async getAllPosts() {
-    // Отримання постів з приєднанням категорій
     const postResult = await this.databaseService.query(
       `
       SELECT 
@@ -65,19 +64,19 @@ export class PostsService {
         users.id AS user_id,
         profiles.user_name AS name,
         profiles.avatar_name AS photo,
-        profiles.posts_count AS flashs,
-        ARRAY_AGG(categories.name) AS categories
+        COUNT(likes.post_id) AS likes, -- Підрахунок лайків для кожного поста
+        ARRAY_AGG(DISTINCT categories.name) AS categories
       FROM posts
       JOIN users ON posts.user_id = users.id
       JOIN profiles ON profiles.user_id = users.id
       LEFT JOIN post_categories ON posts.id = post_categories.post_id
       LEFT JOIN categories ON post_categories.category_id = categories.id
-      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name, profiles.posts_count
+      LEFT JOIN likes ON posts.id = likes.post_id -- З'єднання з таблицею likes
+      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
       ORDER BY posts.created_at DESC
       `
     );
 
-    // Формування відповіді
     return postResult.rows.map((row) => ({
       id: row.id,
       user: {
@@ -87,13 +86,12 @@ export class PostsService {
       },
       text: row.text,
       date: row.date,
-      flashs: row.flashs || 0,
-      categories: row.categories || [], // Список категорій
+      categories: row.categories || [],
+      likes: row.likes || 0, // Повертаємо кількість лайків
     }));
   }
 
   async getFriendsPosts(userId: string) {
-    // Отримання ID користувачів, на яких підписаний `userId`
     const friendIdsResult = await this.databaseService.query(
       `SELECT user_id FROM followers WHERE follower_id = $1`,
       [userId]
@@ -104,7 +102,6 @@ export class PostsService {
       return [];
     }
 
-    // Отримання постів друзів
     const postsResult = await this.databaseService.query(
       `
       SELECT 
@@ -115,7 +112,6 @@ export class PostsService {
         users.id AS user_id,
         profiles.user_name AS name,
         profiles.avatar_name AS photo,
-        profiles.posts_count AS flashs,
         ARRAY_AGG(categories.name) AS categories
       FROM posts
       JOIN users ON posts.user_id = users.id
@@ -123,10 +119,22 @@ export class PostsService {
       LEFT JOIN post_categories ON posts.id = post_categories.post_id
       LEFT JOIN categories ON post_categories.category_id = categories.id
       WHERE posts.user_id = ANY($1)
-      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name, profiles.posts_count
+      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
       ORDER BY posts.created_at DESC
       `,
       [friendIds]
+    );
+
+    const likeCounts = await this.databaseService.query(
+      `
+      SELECT post_id, COUNT(*) as like_count
+      FROM likes
+      GROUP BY post_id
+      `
+    );
+
+    const likeCountMap = Object.fromEntries(
+      likeCounts.rows.map((row) => [row.post_id, row.like_count])
     );
 
     return postsResult.rows.map((row) => ({
@@ -138,13 +146,12 @@ export class PostsService {
       },
       text: row.text,
       date: row.date,
-      flashs: row.flashs || 0,
       categories: row.categories || [],
+      likes: likeCountMap[row.id] || 0, // Додаємо кількість лайків
     }));
   }
 
-  async getPost(id: number) {
-    // Отримання конкретного поста з категоріями
+  async getPost(id: string) {
     const postResult = await this.databaseService.query(
       `
       SELECT 
@@ -167,12 +174,73 @@ export class PostsService {
       return null;
     }
 
+    const likeCountResult = await this.databaseService.query(
+      `
+      SELECT COUNT(*) as like_count
+      FROM likes
+      WHERE post_id = $1
+      `,
+      [id]
+    );
+
     return {
       id: post.id,
       user_id: post.user_id,
       text: post.text,
       date: post.date,
       categories: post.categories || [],
+      likes: likeCountResult.rows[0]?.like_count || 0, // Додаємо кількість лайків
     };
+  }
+
+  async toggleLike(
+    userId: string,
+    postId: string
+  ): Promise<{ success: boolean; operation: string }> {
+    // Перевіряємо, чи вже існує лайк для цього користувача та поста
+    const likeCheck = await this.databaseService.query(
+      `
+      SELECT 1
+      FROM likes
+      WHERE user_id = $1 AND post_id = $2
+      LIMIT 1
+      `,
+      [userId, postId]
+    );
+
+    if (likeCheck.rowCount > 0) {
+      // Якщо лайк існує, видаляємо його
+      await this.databaseService.query(
+        `
+        DELETE FROM likes
+        WHERE user_id = $1 AND post_id = $2
+        `,
+        [userId, postId]
+      );
+      return { success: true, operation: 'delete' }; // Лайк видалений
+    } else {
+      // Якщо лайк не існує, додаємо його
+      await this.databaseService.query(
+        `
+        INSERT INTO likes (user_id, post_id)
+        VALUES ($1, $2)
+        `,
+        [userId, postId]
+      );
+      return { success: true, operation: 'add' }; // Лайк доданий
+    }
+  }
+
+  async checkIsLike(userId: string, postId: string): Promise<boolean> {
+    const result = await this.databaseService.query(
+      `
+      SELECT 1
+      FROM likes
+      WHERE user_id = $1 AND post_id = $2
+      LIMIT 1
+      `,
+      [userId, postId]
+    );
+    return result.rowCount > 0; // Якщо результат знайдений, повертаємо true
   }
 }

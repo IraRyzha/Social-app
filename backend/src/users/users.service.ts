@@ -113,21 +113,21 @@ export class UsersService {
         users.id AS user_id,
         profiles.user_name AS name,
         profiles.avatar_name AS photo,
-        profiles.posts_count AS flashs,
-        ARRAY_AGG(categories.name) AS categories
+        COUNT(likes.post_id) AS likes, -- Підрахунок лайків для кожного поста
+        ARRAY_AGG(DISTINCT categories.name) AS categories
       FROM posts
       JOIN users ON posts.user_id = users.id
       JOIN profiles ON profiles.user_id = users.id
       LEFT JOIN post_categories ON posts.id = post_categories.post_id
       LEFT JOIN categories ON post_categories.category_id = categories.id
+      LEFT JOIN likes ON posts.id = likes.post_id -- З'єднання з таблицею likes
       WHERE users.id = $1
-      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name, profiles.posts_count
+      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
       ORDER BY posts.created_at DESC;
       `,
       [id]
     );
 
-    // Формування відповіді, що включає категорії
     return postResult.rows.map((row) => ({
       id: row.post_id,
       user: {
@@ -137,8 +137,8 @@ export class UsersService {
       },
       text: row.text,
       date: row.date,
-      flashs: row.flashs || 0,
-      categories: row.categories || [], // Список категорій
+      likes: row.likes || 0, // Повертаємо кількість лайків
+      categories: row.categories || [],
     }));
   }
 

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { FlashCoin } from "@/shared/ui/icons";
 import flashLogo from "@/shared/images/flashLogo.webp";
 import userImage from "@/shared/images/userImage.png";
 import sunImage from "@/shared/images/sunImage.jpeg";
@@ -9,6 +8,11 @@ import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/config/AuthProvider";
 import { TCategory } from "@/shared/types/types";
+import { HeartIcon } from "@/shared/ui/icons/heart-icon";
+import { useEffect, useState } from "react";
+import { checkLike } from "../api/check-like";
+import { toggleLike } from "../api/toggle-like";
+import { HeartFilledIcon } from "@/shared/ui/icons/heart-filled-icon";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -20,6 +24,7 @@ const avatars = [
 ];
 
 interface Props {
+  id: string;
   user: {
     id: string;
     name: string;
@@ -27,12 +32,18 @@ interface Props {
   };
   text: string;
   date: string;
-  flashs: number;
+  likes: number;
   categories: TCategory[] | null;
 }
-export const Post = ({ user, text, date, flashs, categories }: Props) => {
+export const Post = ({ id, user, text, date, likes, categories }: Props) => {
+  const [isLiked, setIsLiked] = useState<boolean | null>(null);
+  const [likeCount, setLikeCount] = useState<number>(
+    typeof likes === "string" ? Number(likes) : likes
+  );
   const router = useRouter();
   const { profile } = useAuth();
+
+  console.log(typeof likes);
 
   const formatTimeAgo = (date: string | number) => {
     const dateInMillis = new Date(date).getTime();
@@ -60,6 +71,37 @@ export const Post = ({ user, text, date, flashs, categories }: Props) => {
     router.push(`users/${user.id}`);
   };
 
+  const handleCheckLike = async () => {
+    if (profile) {
+      const isLike = await checkLike(profile.user_id, id);
+      setIsLiked(isLike);
+    }
+  };
+
+  useEffect(() => {
+    handleCheckLike();
+  }, []);
+
+  const handleLike = async () => {
+    if (!profile) {
+      router.push("/auth");
+      return;
+    }
+
+    const { success, operation } = await toggleLike(profile.user_id, id);
+
+    if (success) {
+      if (operation == "add") {
+        setIsLiked(true);
+        setLikeCount((prev) => prev + 1);
+      }
+      if (operation == "delete") {
+        setIsLiked(false);
+        setLikeCount((prev) => prev - 1);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">
       <div className="w-full flex flex-1 justify-between">
@@ -79,14 +121,17 @@ export const Post = ({ user, text, date, flashs, categories }: Props) => {
             <span className="text-sm text-gray-500">{formatTimeAgo(date)}</span>
           </div>
         </div>
-        <div className="flex justify-center items-center gap-1">
-          <FlashCoin className="hover:scale-[1.1] w-4" />
-          <span className="text-black text-xs font-semibold">{flashs}</span>
+        <div className="flex justify-center items-center gap-[3px]">
+          {isLiked ? (
+            <HeartFilledIcon onClick={() => handleLike()} />
+          ) : (
+            <HeartIcon onClick={() => handleLike()} />
+          )}
+          <span className="text-black text-xs font-semibold">{likeCount}</span>
         </div>
       </div>
       <p className="text-gray-700 text-sm mt-3">{text}</p>
 
-      {/* Відображення категорій як хештеги */}
       {categories && categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
           {categories.map((category) => (

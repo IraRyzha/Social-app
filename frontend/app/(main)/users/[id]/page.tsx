@@ -15,14 +15,11 @@ export default function UserProfile() {
 
   const fetchProfile = async () => {
     const response: IProfile = await getProfile(params.id as string);
-    console.log(response);
     setUserProfile(response);
   };
 
   const fetchUserPosts = async () => {
     const response: IPost[] = await getPostsByUserId(params.id as string);
-    console.log("fetchUserPosts");
-    console.log(response);
     setPosts(response);
   };
 
@@ -60,10 +57,11 @@ export default function UserProfile() {
           posts.map((post) => (
             <Post
               key={post.id}
+              id={post.id}
               user={post.user}
               text={post.text}
               date={post.date}
-              flashs={post.flashs}
+              likes={post.likes}
               categories={post.categories}
             />
           ))

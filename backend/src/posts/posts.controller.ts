@@ -25,7 +25,23 @@ export class PostsController {
   }
 
   @Get('post/:id')
-  getPost(@Param('id') id: number) {
+  getPost(@Param('id') id: string) {
     this.postsService.getPost(id);
+  }
+
+  @Post(':postId/toggle-like')
+  async toggleLike(
+    @Body('userId') userId: string,
+    @Body('postId') postId: string
+  ): Promise<{ success: boolean; operation: string }> {
+    return await this.postsService.toggleLike(userId, postId);
+  }
+
+  @Post(':postId/is-like')
+  async checkIfLiked(
+    @Body('userId') userId: string,
+    @Body('postId') postId: string
+  ): Promise<boolean> {
+    return await this.postsService.checkIsLike(userId, postId);
   }
 }

@@ -9,7 +9,7 @@ interface IPost {
   };
   text: string; // Основний текст поста
   date: string; // Дата публікації, можна використовувати Date, якщо потрібне форматування
-  flashs: number;
+  likes: number;
   categories: TCategory[] | [];
 }
 

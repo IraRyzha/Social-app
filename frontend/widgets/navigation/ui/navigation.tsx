@@ -22,10 +22,8 @@ const iconComponents: Record<IconKey, () => JSX.Element> = {
 export default function Navigation() {
   const pathname = usePathname();
 
-  console.log(pathname);
-
   return (
-    <nav className="w-full h-auto px-8 py-5 flex flex-col items-start justify-center gap-2 rounded-xl bg-white shadow">
+    <nav className="hidden md:flex w-full h-auto px-8 py-5 flex-col items-start justify-center gap-2 rounded-xl bg-white shadow">
       {menuItems.map((menuItem) => {
         const Icon = iconComponents[menuItem.icon];
         const isActive = pathname === menuItem.link;

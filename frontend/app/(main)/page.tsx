@@ -93,10 +93,11 @@ export default function Home() {
           return (
             <Post
               key={post.id}
+              id={post.id}
               user={post.user}
               text={post.text}
               date={post.date}
-              flashs={post.flashs}
+              likes={post.likes}
               categories={post.categories}
             />
           );
