@@ -38,19 +38,19 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full px-32 py-3 flex items-center justify-between mb-6 bg-white shadow-md">
-      <div className="flex justify-center items-center gap-3">
+    <header className="w-full px-5 py-5 md:px-32 md:py-3 flex items-center justify-between mb-6 bg-white shadow-md">
+      <div className="flex justify-center items-center gap-1 md:gap-3">
         <Image
           src={flashLogo}
           alt="logo"
           width={50}
           height={50}
-          className="rounded-xl"
+          className="rounded-xl size-7 md:size-12"
         />
-        <h1 className="text-3xl font-bold">flash</h1>
+        <h1 className="text-xl md:text-3xl font-bold">flash</h1>
       </div>
 
-      <nav className="flex md:hidden w-full h-auto items-center justify-center gap-2">
+      <nav className="flex md:hidden w-full h-auto items-center justify-center">
         {menuItems.map((menuItem) => {
           const Icon = iconComponents[menuItem.icon];
           const isActive = pathname === menuItem.link;
@@ -60,10 +60,9 @@ export default function Header() {
               key={menuItem.name}
               className={`${
                 isActive && "bg-main-blue-light bg-opacity-10"
-              } flex justify-center items-center gap-1 hover:bg-gray-100 hover:scale-[1.02] rounded-xl px-4 py-1`}
+              } flex hover:bg-gray-100 hover:scale-[1.02] rounded-xl p-[5px]`}
             >
               <Icon />
-              <p className="text-base font-semibold">{menuItem.name}</p>
             </Link>
           );
         })}
@@ -73,7 +72,7 @@ export default function Header() {
         className="flex items-center gap-[3px] cursor-pointer"
         onClick={handleAuth}
       >
-        <span className="text-base font-semibold">
+        <span className="text-sm md:text-base font-semibold">
           {isAuthenticated ? "logout" : "login"}
         </span>
         {isAuthenticated ? <LogoutIcon /> : <LoginIcon />}

@@ -8,7 +8,7 @@ export default function AuthForm() {
   const [isRegistering, setIsRegistering] = useState(false);
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white px-8 py-5 border border-gray-300 rounded-xl shadow-md">
+    <div className="w-[90%] md:w-full max-w-md mx-auto bg-white px-8 py-5 border border-gray-300 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
         {isRegistering ? "Register" : "Login"}
       </h2>

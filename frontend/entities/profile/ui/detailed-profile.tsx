@@ -69,7 +69,7 @@ export default function DetailedProfile({
   };
 
   return (
-    <div className="max-w-lg w-full bg-white shadow-md rounded-xl p-6 text-center">
+    <div className="w-full md:max-w-lg bg-white shadow-md rounded-xl p-6 text-center">
       {/* Аватар */}
       <div className="w-35 h-35 mx-auto flex justify-center items-center rounded-full mb-4">
         <Image

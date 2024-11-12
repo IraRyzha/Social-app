@@ -43,7 +43,7 @@ export default function CreatePostForm({ toggleCreate }: Props) {
   };
 
   return (
-    <div className="bg-white px-8 pt-5 pb-3 rounded-lg shadow-md">
+    <div className="bg-white px-4 md:px-8 pt-5 pb-3 rounded-lg shadow-md">
       <form onSubmit={handleSubmit}>
         <textarea
           className="w-full p-2 border border-gray-300 text-sm rounded-lg resize-none"
@@ -60,7 +60,7 @@ export default function CreatePostForm({ toggleCreate }: Props) {
               key={category}
               type="button"
               onClick={() => handleCategoryClick(category)}
-              className={`px-4 py-1 text-sm rounded-full transition-colors duration-200 ${
+              className={`px-2 md:px-4 py-1 text-sm rounded-full transition-colors duration-200 ${
                 selectedCategories.includes(category)
                   ? "bg-blue-100 text-blue-600"
                   : "bg-gray-200 text-gray-700"

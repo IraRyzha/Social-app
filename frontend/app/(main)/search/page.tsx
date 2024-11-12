@@ -44,7 +44,7 @@ export default function Search() {
       </div>
 
       {/* Horizontal Slider for Filters with Arrows */}
-      <div className="w-full max-w-3xl px-4 flex items-center mb-4">
+      <div className="w-full max-w-3xl px-3 md:px-4 flex items-center mb-4">
         {/* Left Arrow */}
         <button onClick={scrollLeft} className="text-gray-600 p-2">
           <ChevronLeft />
@@ -53,13 +53,13 @@ export default function Search() {
         {/* Slider */}
         <div
           ref={sliderRef}
-          className="flex space-x-3 overflow-x-auto scrollbar-hide"
+          className="flex space-x-2 md:space-x-3 overflow-x-auto scrollbar-hide"
         >
           {filters.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-4 py-1 rounded-full whitespace-nowrap ${
+              className={`px-3 md:px-4 py-1 text-sm md:text-base rounded-full whitespace-nowrap ${
                 activeFilter === filter
                   ? "bg-blue-100 text-main-blue"
                   : "bg-gray-100 text-gray-700"
@@ -81,7 +81,7 @@ export default function Search() {
         <div className="flex w-full bg-gray-200 overflow-hidden">
           <button
             onClick={() => setActiveTab("posts")}
-            className={`flex-1 py-1 text-center text-sm rounded-lg ${
+            className={`flex-1 py-1 text-center text-xs md:text-sm rounded-lg ${
               activeTab === "posts"
                 ? "bg-main-blue-light text-white"
                 : "bg-gray-200"
@@ -91,7 +91,7 @@ export default function Search() {
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`flex-1 py-1 text-center text-sm rounded-lg ${
+            className={`flex-1 py-1 text-center text-xs md:text-sm rounded-lg ${
               activeTab === "users"
                 ? "bg-main-blue-light text-white"
                 : "bg-gray-200"

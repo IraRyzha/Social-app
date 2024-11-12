@@ -49,7 +49,7 @@ export default function Home() {
   }, [activeTab]);
 
   return (
-    <div className="w-full h-screen  flex flex-col gap-5 max-h-screen overflow-y-auto">
+    <div className="w-full h-screen flex flex-col gap-5 max-h-screen overflow-y-auto">
       {!isCreating && (
         <div className="flex items-center justify-center">
           <Button
@@ -68,7 +68,7 @@ export default function Home() {
         <div className="flex w-full bg-gray-200 overflow-hidden">
           <button
             onClick={() => setActiveTab("all")}
-            className={`flex-1 py-1 text-center text-sm rounded-lg ${
+            className={`flex-1 py-1 text-center text-xs md:text-sm rounded-lg ${
               activeTab === "all"
                 ? "bg-main-blue-light text-white"
                 : "bg-gray-200"
@@ -78,7 +78,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => setActiveTab("friends")}
-            className={`flex-1 py-1 text-center text-sm rounded-lg ${
+            className={`flex-1 py-1 text-center text-xs md:text-sm rounded-lg ${
               activeTab === "friends"
                 ? "bg-main-blue-light text-white"
                 : "bg-gray-200"

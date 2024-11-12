@@ -10,14 +10,14 @@ export default function MainLayout({
   return (
     <div className="h-wull min-h-screen h-full max-h-screen overflow-y-auto overflow-x-auto">
       <Header />
-      <div className="w-full h-full px-32 flex">
-        <div className="w-1/4 min-w-[10%] h-auto">
+      <div className="w-full h-full flex px-5 md:px-32 ">
+        <div className="hidden md:block w-1/4 min-w-[10%] h-auto">
           <Navigation />
         </div>
-        <div className="w-full max-w-[80%] mx-5 overflow-x-auto">
+        <div className="w-full md:max-w-[80%] md:mx-5 overflow-x-auto">
           {children}
         </div>
-        <div className="w-1/3 min-w-[20%] h-auto">
+        <div className="hidden md:block w-1/3 min-w-[20%] h-auto">
           <Profile type="base" />
         </div>
       </div>

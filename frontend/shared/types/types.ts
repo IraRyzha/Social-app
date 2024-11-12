@@ -4,19 +4,19 @@ type TCategory =
   | "memes"
   | "business"
   | "technology"
-  | "ai"
   | "programming"
   | "blockchain"
   | "crypto"
+  | "ai"
   | "job"
   | "art"
   | "science"
   | "sports"
-  | "travel"
-  | "self-improvement"
   | "health"
-  | "news"
   | "psychology"
+  | "news"
+  | "self-improvement"
+  | "travel"
   | "history";
 
 export type { TCategory };
