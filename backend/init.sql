@@ -55,13 +55,26 @@ CREATE TABLE likes (
   PRIMARY KEY (user_id, post_id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE chats (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  is_read BOOLEAN DEFAULT FALSE,
+  is_group BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE chat_members (
+  chat_id UUID REFERENCES chats(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (chat_id, user_id)
+);
+
+CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),      -- Унікальний ідентифікатор повідомлення
+  chat_id UUID REFERENCES chats(id) ON DELETE CASCADE, -- Ідентифікатор чату
+  sender_id UUID REFERENCES users(id) ON DELETE CASCADE, -- Ідентифікатор відправника
+  content TEXT NOT NULL,                               -- Текст повідомлення
+  is_read BOOLEAN DEFAULT FALSE,                      -- Чи прочитане повідомлення
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP       -- Дата створення повідомлення
 );
 
 CREATE TABLE user_settings (

@@ -28,7 +28,7 @@ export default function LoginForm() {
         email: "",
         password: "",
       });
-      router.push("");
+      router.replace("/");
     } catch (error) {
       console.error("Login failed:", error);
     }

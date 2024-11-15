@@ -14,6 +14,8 @@ import { useAuth } from "@/config/AuthProvider";
 import { useEffect, useState } from "react";
 import { unfollowUser } from "../api/unfollow-user";
 import { checkFollowing } from "../api/check-following";
+import { createChat } from "@/entities/chat/api/create-chat";
+import { useRouter } from "next/navigation";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -33,13 +35,13 @@ export default function DetailedProfile({
 }) {
   const [isFollowing, setIsFollowing] = useState(false);
   const { profile } = useAuth();
+  const router = useRouter();
 
   const profileAvatar = avatars.find(
     (avatar) => avatar.name === userProfile.avatar_name
   );
 
   useEffect(() => {
-    // Перевіряємо статус підписки при завантаженні компонента
     const fetchFollowStatus = async () => {
       if (profile) {
         const followingStatus = await checkFollowing(
@@ -65,6 +67,16 @@ export default function DetailedProfile({
     if (profile) {
       await unfollowUser(profile.user_id, userProfile.user_id);
       setIsFollowing(false);
+    }
+  };
+
+  const handleMessage = async () => {
+    if (profile) {
+      const createdChatId = await createChat(false, [
+        profile.user_id,
+        userProfile.user_id,
+      ]);
+      router.replace(`/messages/${createdChatId}`);
     }
   };
 
@@ -150,7 +162,7 @@ export default function DetailedProfile({
             size="medium"
             color="gray"
             text="small"
-            // onClick={handleMessage}
+            onClick={handleMessage}
           >
             Message
           </Button>

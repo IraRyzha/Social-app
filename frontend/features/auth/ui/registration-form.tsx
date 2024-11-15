@@ -61,7 +61,7 @@ export default function RegistrationForm() {
         bio: "",
         avatar_name: "",
       });
-      router.push("");
+      router.replace("/");
     } catch (error) {
       console.error("Registration failed:", error);
       window.alert("Registration failed");
