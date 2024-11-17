@@ -95,6 +95,59 @@ export class UsersService {
     return result.rows;
   }
 
+  async getUsersByFilters(
+    keywords: string,
+    sortBy: 'date' | 'popularity'
+  ): Promise<any[]> {
+    const sortColumn =
+      sortBy === 'popularity'
+        ? `(profiles.followers_count * 0.5 + profiles.posts_count * 0.3 + profiles.points * 0.2)`
+        : 'profiles.created_at';
+
+    const query = `
+      SELECT
+        profiles.id,
+        profiles.user_id,
+        profiles.user_name,
+        profiles.avatar_name,
+        profiles.status,
+        profiles.bio,
+        profiles.followers_count,
+        profiles.following_count,
+        profiles.posts_count,
+        profiles.points,
+        profiles.created_at,
+        profiles.updated_at,
+        (
+          profiles.followers_count * 0.5 +
+          profiles.posts_count * 0.3 +
+          profiles.points * 0.2
+        ) AS popularity_score
+      FROM profiles
+      WHERE
+        ($1::text IS NULL OR profiles.user_name ILIKE '%' || $1 || '%')
+      ORDER BY ${sortColumn} DESC;
+    `;
+
+    const result = await this.databaseService.query(query, [keywords || null]);
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      user_id: row.user_id,
+      user_name: row.user_name,
+      avatar_name: row.avatar_name || 'default',
+      status: row.status,
+      bio: row.bio || '',
+      followers_count: row.followers_count || 0,
+      following_count: row.following_count || 0,
+      posts_count: row.posts_count || 0,
+      points: row.points || 0,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+      popularity_score: Number(row.popularity_score), // У разі потреби
+    }));
+  }
+
   async getProfile(id: string) {
     const result = await this.databaseService.query(
       'SELECT * FROM profiles WHERE user_id = $1',

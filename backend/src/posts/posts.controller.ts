@@ -18,6 +18,16 @@ export class PostsController {
     return await this.postsService.getAllPosts();
   }
 
+  @Get('by-filters')
+  async getPostsByCategories(
+    @Query('categories') categories: string,
+    @Query('keywords') keywords?: string,
+    @Query('sortBy') sortBy: 'date' | 'popularity' = 'date'
+  ): Promise<any[]> {
+    const categoryArray = categories === 'all' ? [] : categories.split(',');
+    return this.postsService.getPostsByFilters(keywords, categoryArray, sortBy);
+  }
+
   @Get('friends')
   async getFriendsPosts(@Query('userId') userId: string) {
     console.log('search friends post user with id' + userId);

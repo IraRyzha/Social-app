@@ -33,7 +33,7 @@ interface Props {
   text: string;
   date: string;
   likes: number;
-  categories: TCategory[] | null;
+  categories: TCategory[];
 }
 export const Post = ({ id, user, text, date, likes, categories }: Props) => {
   const [isLiked, setIsLiked] = useState<boolean | null>(null);
@@ -102,6 +102,8 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
     }
   };
 
+  console.log(categories);
+
   return (
     <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">
       <div className="w-full flex flex-1 justify-between">
@@ -131,8 +133,7 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
         </div>
       </div>
       <p className="text-gray-700 text-sm mt-3">{text}</p>
-
-      {categories && categories.length > 0 && (
+      {categories[0] != null && categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
           {categories.map((category) => (
             <span

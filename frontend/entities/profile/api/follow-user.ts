@@ -1,7 +1,7 @@
 export const followUser = async (followerId: string, userId: string) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}/follow`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/user/${userId}/follow`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

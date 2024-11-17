@@ -8,7 +8,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-wull min-h-screen h-full max-h-screen overflow-y-auto overflow-x-auto">
+    <div className="h-wull min-h-screen h-full relative max-h-screen overflow-y-auto overflow-x-auto">
       <Header />
       <div className="w-full h-full flex px-5 md:px-32 ">
         <div className="hidden md:block w-1/4 min-w-[10%] h-auto">
@@ -21,9 +21,7 @@ export default function MainLayout({
           <Profile type="base" />
         </div>
       </div>
-      <div className="block md:hidden w-1/4 min-w-[10%] h-auto">
-        <Navigation type="mobile" />
-      </div>
+      <Navigation type="mobile" />
     </div>
   );
 }

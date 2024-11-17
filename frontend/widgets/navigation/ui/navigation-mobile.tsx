@@ -23,7 +23,7 @@ export default function MobileNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="hidden md:flex w-full h-auto px-8 py-5 flex-col items-start justify-center gap-2 rounded-xl bg-white shadow">
+    <nav className="w-full flex md:hidden sticky bottom-0 inset-0 h-auto px-8 py-5 mt-5 items-center justify-center gap-7 bg-white shadow">
       {menuItems.map((menuItem) => {
         const Icon = iconComponents[menuItem.icon];
         const isActive = pathname === menuItem.link;
@@ -33,10 +33,9 @@ export default function MobileNavigation() {
             key={menuItem.name}
             className={`${
               isActive && "bg-main-blue-light bg-opacity-10"
-            } flex justify-start items-center gap-2 hover:bg-gray-100 hover:scale-[1.02] rounded-xl px-4 py-1`}
+            } flex justify-center items-center  hover:bg-gray-100 hover:scale-[1.02] rounded-xl`}
           >
             <Icon />
-            <p className="text-base font-semibold">{menuItem.name}</p>
           </Link>
         );
       })}

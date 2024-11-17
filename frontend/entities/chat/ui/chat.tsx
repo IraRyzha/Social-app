@@ -60,8 +60,8 @@ export const Chat = ({ chat }: { chat: IChat }) => {
       </div>
       <div className="h-full flex flex-col gap-1 items-end">
         <p className="text-sm text-gray-500 ">
-          {/* {chat.updated_at} */}
-          15:31
+          {chat.updated_at}
+          {/* 15:31 */}
         </p>
         {chat.unread_count > 0 && (
           <span className="ml-4 bg-gray-500 text-white text-xs font-bold rounded-full px-2 py-[1px]">

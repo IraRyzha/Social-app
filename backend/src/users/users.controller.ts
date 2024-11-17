@@ -24,14 +24,25 @@ export class UsersController {
     this.usersService.getAllUsers();
   }
 
-  @Get(':id')
-  getUser(@Param('id') id: string) {
-    return this.usersService.getProfile(id);
+  @Get('user/:id')
+  async getUser(@Param('id') id: string) {
+    console.log('UserId:', id);
+    return await this.usersService.getProfile(id);
+  }
+
+  @Get('by-filters')
+  async getUsersByFilters(
+    @Query('keywords') keywords: string,
+    @Query('sortBy') sortBy: 'date' | 'popularity'
+  ) {
+    console.log('Keywords:', keywords);
+    console.log('SortBy:', sortBy);
+    return await this.usersService.getUsersByFilters(keywords, sortBy);
   }
 
   @Get(':id/posts')
-  getUserPosts(@Param('id') id: string) {
-    return this.usersService.getPostsByUserId(id);
+  async getUserPosts(@Param('id') id: string) {
+    return await this.usersService.getPostsByUserId(id);
   }
 
   @Get(':id/is-following')

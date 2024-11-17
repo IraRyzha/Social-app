@@ -19,7 +19,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full px-5 py-5 md:px-32 md:py-3 flex items-center justify-between mb-6 bg-white shadow-md">
+    <header className="w-full md:relative sticky top-0 px-5 py-5 md:px-32 md:py-3 flex items-center justify-between mb-6 bg-white shadow-md">
       <div
         className="flex justify-center items-center gap-1 md:gap-3 cursor-pointer"
         onClick={() => router.replace("/")}
