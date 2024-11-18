@@ -49,7 +49,7 @@ export default function Home() {
   }, [activeTab]);
 
   return (
-    <div className="w-full h-screen flex flex-col gap-5 max-h-screen overflow-y-auto">
+    <div className="w-full h-auto flex flex-col gap-5">
       {!isCreating && (
         <div className="flex items-center justify-center">
           <Button
@@ -88,7 +88,7 @@ export default function Home() {
           </button>
         </div>
       </div>
-      <div className="flex flex-col gap-5 max-h-screen overflow-y-auto">
+      <div className="w-full h-auto flex flex-col gap-5">
         {posts.map((post) => {
           return (
             <Post

@@ -122,18 +122,10 @@ export default function DetailedProfile({
         </div>
       </div>
 
-      {/* Очки і дати */}
+      {/* Очки */}
       <div className="mt-6">
         <p className="text-sm">
           <span className="font-semibold">Points:</span> {userProfile.points}
-        </p>
-        <p className="text-sm">
-          <span className="font-semibold">Created at:</span>{" "}
-          {new Date(userProfile.created_at).toLocaleDateString()}
-        </p>
-        <p className="text-sm">
-          <span className="font-semibold">Last updated:</span>{" "}
-          {new Date(userProfile.updated_at).toLocaleDateString()}
         </p>
       </div>
 

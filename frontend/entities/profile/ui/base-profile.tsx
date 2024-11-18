@@ -23,7 +23,7 @@ export default function BaseProfile() {
 
   if (!isAuthenticated || !profile) {
     return (
-      <div className="w-full h-auto px-11 py-8 flex flex-col items-center justify-center gap-5 rounded-xl bg-white shadow">
+      <div className="w-full h-auto px-11 py-8 flex flex-col items-center justify-center gap-5 rounded-xl bg-gray-50 shadow">
         <Image
           src={userImage}
           alt="Profile Picture"
@@ -40,14 +40,14 @@ export default function BaseProfile() {
   );
 
   return (
-    <div className="w-full h-auto px-11 py-8 flex flex-col items-start justify-center gap-5 rounded-xl bg-white shadow">
+    <div className="w-full h-auto p-3 flex flex-col items-start justify-center gap-2 rounded-xl bg-gray-50 shadow">
       <div className="w-full h-auto flex flex-col items-center gap-2">
         <div className="w-auto h-auto rounded-full overflow-hidden">
           <Image
             src={profileAvatar ? profileAvatar.image : userImage}
             alt="Profile Picture"
-            width={100}
-            height={100}
+            width={70}
+            height={70}
             className="object-cover"
           />
         </div>
@@ -57,7 +57,7 @@ export default function BaseProfile() {
         </div>
       </div>
 
-      <div className="w-full flex flex-col items-center gap-2">
+      <div className="w-full flex flex-col items-center gap-1">
         <div className="w-full flex justify-center items-center gap-2">
           <StatisticItem
             textSize={"text-sm"}
@@ -71,7 +71,7 @@ export default function BaseProfile() {
           />
         </div>
         <StatisticItem
-          textSize={"text-base"}
+          textSize={"text-sm"}
           amount={profile?.posts_count ?? 0}
           ofEntety={"posts"}
         />

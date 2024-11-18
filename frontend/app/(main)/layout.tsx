@@ -1,6 +1,5 @@
 import { Profile } from "@/entities/profile";
-import Header from "@/shared/ui/header/header";
-import { Navigation } from "@/widgets/navigation";
+import Navigation from "@/widgets/navigation/navigation";
 
 export default function MainLayout({
   children,
@@ -8,20 +7,20 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-wull min-h-screen h-full relative max-h-screen overflow-y-auto overflow-x-auto">
-      <Header />
-      <div className="w-full h-full flex px-5 md:px-32 ">
-        <div className="hidden md:block w-1/4 min-w-[10%] h-auto">
-          <Navigation type="desktop" />
+    <div className="w-full h-auto relative">
+      <div className="w-full h-full relative flex justify-between md:p-0">
+        <div className="w-1/5 h-screen hidden md:block sticky inset-y-0 min-w-[10%]">
+          <Navigation />
         </div>
-        <div className="w-full md:max-w-[80%] md:mx-8 overflow-x-auto">
-          {children}
-        </div>
-        <div className="hidden md:block w-1/3 min-w-[20%] h-auto">
-          <Profile type="base" />
+        <div className="w-full h-auto md:p-10 overflow-x-auto">{children}</div>
+        <div className="w-2/6 h-screen sticky inset-0 p-5">
+          <div className="w-full h-full hidden md:flex flex-col items-center rounded-xl bg-white p-5 ">
+            <div className="w-4/5 h-1/5">
+              <Profile type="base" />
+            </div>
+          </div>
         </div>
       </div>
-      <Navigation type="mobile" />
     </div>
   );
 }

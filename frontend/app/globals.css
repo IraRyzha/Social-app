@@ -11,10 +11,12 @@ html,
 body {
   height: 100vh;
   margin: 0;
+  background: #f0f0f0; /* Світло-сірий фон */
 }
 
 * {
   transition: all 0.3s ease-in-out;
+  scrollbar-width: none;
 }
 
 body {
@@ -26,8 +28,4 @@ body {
   display: none;
   width: 0;
   height: 0;
-}
-
-* {
-  scrollbar-width: none;
 }

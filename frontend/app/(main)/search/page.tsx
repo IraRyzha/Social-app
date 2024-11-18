@@ -78,7 +78,7 @@ export default function Search() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col items-center overflow-auto transition duration-300 ease-in-out transform">
+    <div className="w-full h-auto flex flex-col items-center transition duration-300 ease-in-out transform">
       {/* Search Input and Sort Select */}
       <div className="w-full max-w-md mb-3 mt-[2px] flex justify-center items-center gap-1">
         <input
@@ -174,7 +174,7 @@ export default function Search() {
           </button>
         </div>
       </div>
-      <div className="w-full flex flex-col gap-5 max-h-screen overflow-y-auto">
+      <div className="w-full h-auto flex flex-col gap-5">
         {activeTab == "posts" &&
           filteredPosts?.map((post) => {
             return (
