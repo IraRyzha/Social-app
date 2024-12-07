@@ -8,7 +8,7 @@ export default function LoginForm() {
     email: "",
     password: "",
   });
-  const { login, setProfile } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleChange = (
@@ -23,7 +23,7 @@ export default function LoginForm() {
     try {
       const result = await loginUser(formData);
       console.log("User logged in:", result);
-      setProfile(result);
+      login(result.profile);
       setFormData({
         email: "",
         password: "",
@@ -32,7 +32,6 @@ export default function LoginForm() {
     } catch (error) {
       console.error("Login failed:", error);
     }
-    login();
   };
 
   return (

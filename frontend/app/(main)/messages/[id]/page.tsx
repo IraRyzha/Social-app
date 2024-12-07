@@ -13,7 +13,7 @@ import sunImage from "@/shared/images/sunImage.jpeg";
 import sproutImage from "@/shared/images/sproutImage.jpeg";
 import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -29,7 +29,7 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState<string>("");
   const [chatInfo, setChatInfo] = useState<IChatInfo>();
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<undefined | Socket>(undefined);
   // const [error, setError] = useState(null);
   const { profile } = useAuth();
 
@@ -55,14 +55,6 @@ export default function Chat() {
       const newSocket = io("http://localhost:3002/chat", {
         transports: ["websocket"],
         query: { chatId: params.id },
-      });
-
-      newSocket.on("connect", () => {
-        console.log("WebSocket підключено:", socket.id);
-      });
-
-      newSocket.on("connect_error", (err) => {
-        console.error("Помилка підключення WebSocket:", err);
       });
 
       setSocket(newSocket);
@@ -118,9 +110,9 @@ export default function Chat() {
   //   return <div className="text-center text-red-500 mt-10">{error}</div>;
 
   return (
-    <div className="flex flex-col h-[80vh] w-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-white shadow-lg rounded-lg overflow-hidden">
       {chatInfo && (
-        <div className="flex items-center space-x-3 px-3 py-1">
+        <div className="flex items-center space-x-3 p-3">
           <Image
             src={getAvatarImage()}
             width={100}
@@ -130,7 +122,7 @@ export default function Chat() {
           />
           <div>
             <h1 className="text-lg font-semibold">{chatInfo.user.name}</h1>
-            <p className="text-sm text-gray-200">Онлайн</p>
+            {/* <p className="text-sm text-gray-200">status</p> */}
           </div>
         </div>
       )}

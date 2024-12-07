@@ -43,8 +43,6 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
   const router = useRouter();
   const { profile } = useAuth();
 
-  console.log(typeof likes);
-
   const formatTimeAgo = (date: string | number) => {
     const dateInMillis = new Date(date).getTime();
 
@@ -101,8 +99,6 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
       }
     }
   };
-
-  console.log(categories);
 
   return (
     <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">

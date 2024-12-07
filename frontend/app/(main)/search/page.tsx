@@ -1,7 +1,6 @@
 "use client";
 
-import { IPost, Post } from "@/entities/post";
-import { getPostsByFilters } from "@/entities/post/api/get-posts-by-filters";
+import { getPosts, IPost, Post } from "@/entities/post";
 import { IProfile, Profile } from "@/entities/profile";
 import { categories } from "@/shared/constants/categories";
 import { TCategory } from "@/shared/types/types";
@@ -15,6 +14,8 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import { getProfilesByFilters } from "@/entities/profile/api/get-profiles-by-filters";
+import Pagination from "@/features/pagination/pagination";
+import { useDebounce } from "@/shared/hooks/use-debounce";
 
 export default function Search() {
   const [filteredPosts, setFilteredPosts] = useState<IPost[] | null>(null);
@@ -24,9 +25,16 @@ export default function Search() {
   const [sortOption, setSortOption] = useState<"date" | "popularity">("date");
   const [activeFilters, setActiveFilters] = useState<TCategory[]>(["all"]);
 
+  // Параметри для пагінації
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
+  const pageSize = 10;
+
   const filters: TCategory[] = ["all", ...categories];
 
   const sliderRef = useRef<HTMLDivElement | null>(null);
+
+  const debouncedSearchKeywords = useDebounce(searchKeywords, 300);
 
   const scrollLeft = () => {
     if (sliderRef.current) {
@@ -47,34 +55,65 @@ export default function Search() {
   };
 
   const fetchPosts = async () => {
-    const response = await getPostsByFilters(
-      activeFilters,
-      searchKeywords,
-      sortOption
-    );
-    setFilteredPosts(response);
+    const selectedCategories =
+      activeFilters.includes("all") || activeFilters.length === 0
+        ? ""
+        : activeFilters.join(",");
+    const response = await getPosts({
+      categories: selectedCategories,
+      keywords: debouncedSearchKeywords,
+      sortBy: sortOption,
+      page: currentPage,
+      pageSize,
+    });
+    setFilteredPosts(response.posts);
+    setTotal(response.total);
+    console.log("fetch posts request work");
   };
 
   const fetchUsers = async () => {
-    const response = await getProfilesByFilters(searchKeywords, sortOption);
-    setFilteredUsers(response);
+    const response = await getProfilesByFilters({
+      keywords: searchKeywords,
+      sortBy: sortOption,
+      page: currentPage,
+      pageSize,
+    });
+    setFilteredUsers(response.profiles);
+    setTotal(response.total); // Загальна кількість користувачів
   };
 
   useEffect(() => {
-    if (activeTab == "posts") {
+    if (activeTab === "posts") {
       fetchPosts();
     } else {
       fetchUsers();
     }
-  }, [activeTab, activeFilters, searchKeywords, sortOption]);
+  }, [
+    activeTab,
+    activeFilters,
+    debouncedSearchKeywords,
+    sortOption,
+    currentPage,
+  ]);
 
   const toggleFilter = (filter: TCategory) => {
-    setActiveFilters(
-      (prev) =>
-        prev.includes(filter)
-          ? prev.filter((f) => f !== filter) // Видаляє, якщо фільтр вже активний
-          : [...prev, filter] // Додає новий фільтр
-    );
+    setActiveFilters((prev) => {
+      if (filter === "all") {
+        return ["all"];
+      } else {
+        const updatedFilters = prev.filter((f) => f !== "all");
+
+        if (updatedFilters.includes(filter)) {
+          return updatedFilters.filter((f) => f !== filter);
+        } else {
+          return [...updatedFilters, filter];
+        }
+      }
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -90,12 +129,9 @@ export default function Search() {
         />
         <div className="relative w-1/4">
           <Listbox value={sortOption} onChange={setSortOption}>
-            {/* Кнопка для відкриття списку */}
             <ListboxButton className="w-full px-3 py-2 text-sm md:text-base bg-white border border-stone-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-main-blue-light text-left">
               {sortOption}
             </ListboxButton>
-
-            {/* Список опцій */}
             <ListboxOptions className="absolute z-10 mt-1 w-full bg-white border border-stone-300 rounded-lg shadow-lg">
               {["date", "popularity"].map((item) => (
                 <ListboxOption
@@ -115,14 +151,11 @@ export default function Search() {
         </div>
       </div>
 
-      {activeTab == "posts" && (
+      {activeTab === "posts" && (
         <div className="w-full max-w-3xl px-3 md:px-4 flex items-center mb-4">
-          {/* Left Arrow */}
           <button onClick={scrollLeft} className="text-gray-600 p-2">
             <ChevronLeft />
           </button>
-
-          {/* Slider */}
           <div
             ref={sliderRef}
             className="flex space-x-2 md:space-x-3 overflow-x-auto scrollbar-hide"
@@ -141,8 +174,6 @@ export default function Search() {
               </button>
             ))}
           </div>
-
-          {/* Right Arrow */}
           <button onClick={scrollRight} className="text-gray-600 p-2">
             <ChevronRight />
           </button>
@@ -175,25 +206,33 @@ export default function Search() {
         </div>
       </div>
       <div className="w-full h-auto flex flex-col gap-5">
-        {activeTab == "posts" &&
-          filteredPosts?.map((post) => {
-            return (
-              <Post
-                key={post.id}
-                id={post.id}
-                user={post.user}
-                text={post.text}
-                date={post.date}
-                likes={post.likes}
-                categories={post.categories}
-              />
-            );
-          })}
-        {activeTab == "users" &&
-          filteredUsers?.map((profile) => {
-            return <Profile key={profile.id} type="item" profile={profile} />;
-          })}
+        {activeTab === "posts" &&
+          filteredPosts?.map((post) => (
+            <Post
+              key={post.id}
+              id={post.id}
+              user={post.user}
+              text={post.text}
+              date={post.date}
+              likes={post.likes}
+              categories={post.categories}
+            />
+          ))}
+        {activeTab === "users" &&
+          filteredUsers?.map((profile) => (
+            <Profile key={profile.id} type="item" profile={profile} />
+          ))}
       </div>
+
+      {/* Пагінація */}
+      {total > pageSize && (
+        <Pagination
+          total={total}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

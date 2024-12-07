@@ -97,13 +97,29 @@ export class UsersService {
 
   async getUsersByFilters(
     keywords: string,
-    sortBy: 'date' | 'popularity'
-  ): Promise<any[]> {
+    sortBy: 'date' | 'popularity',
+    page: number = 1,
+    pageSize: number = 10
+  ): Promise<{ profiles: any[]; total: number }> {
     const sortColumn =
       sortBy === 'popularity'
         ? `(profiles.followers_count * 0.5 + profiles.posts_count * 0.3 + profiles.points * 0.2)`
         : 'profiles.created_at';
 
+    const offset = (page - 1) * pageSize;
+
+    // Запит для отримання загальної кількості записів
+    const countQuery = `
+      SELECT COUNT(*) AS total
+      FROM profiles
+      WHERE ($1::text IS NULL OR profiles.user_name ILIKE '%' || $1 || '%')
+    `;
+    const countResult = await this.databaseService.query(countQuery, [
+      keywords || null,
+    ]);
+    const total = Number(countResult.rows[0]?.total || 0);
+
+    // Основний запит із обмеженнями для пагінації
     const query = `
       SELECT
         profiles.id,
@@ -124,28 +140,35 @@ export class UsersService {
           profiles.points * 0.2
         ) AS popularity_score
       FROM profiles
-      WHERE
-        ($1::text IS NULL OR profiles.user_name ILIKE '%' || $1 || '%')
-      ORDER BY ${sortColumn} DESC;
+      WHERE ($1::text IS NULL OR profiles.user_name ILIKE '%' || $1 || '%')
+      ORDER BY ${sortColumn} DESC
+      LIMIT $2 OFFSET $3
     `;
 
-    const result = await this.databaseService.query(query, [keywords || null]);
+    const result = await this.databaseService.query(query, [
+      keywords || null,
+      pageSize,
+      offset,
+    ]);
 
-    return result.rows.map((row) => ({
-      id: row.id,
-      user_id: row.user_id,
-      user_name: row.user_name,
-      avatar_name: row.avatar_name || 'default',
-      status: row.status,
-      bio: row.bio || '',
-      followers_count: row.followers_count || 0,
-      following_count: row.following_count || 0,
-      posts_count: row.posts_count || 0,
-      points: row.points || 0,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-      popularity_score: Number(row.popularity_score), // У разі потреби
-    }));
+    return {
+      profiles: result.rows.map((row) => ({
+        id: row.id,
+        user_id: row.user_id,
+        user_name: row.user_name,
+        avatar_name: row.avatar_name || 'default',
+        status: row.status,
+        bio: row.bio || '',
+        followers_count: row.followers_count || 0,
+        following_count: row.following_count || 0,
+        posts_count: row.posts_count || 0,
+        points: row.points || 0,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+        popularity_score: Number(row.popularity_score),
+      })),
+      total, // Додаємо загальну кількість записів
+    };
   }
 
   async getProfile(id: string) {

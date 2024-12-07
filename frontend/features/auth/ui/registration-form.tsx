@@ -19,7 +19,7 @@ export default function RegistrationForm() {
     avatar_name: "",
   });
   const [selectedAvatar, setSelectedAvatar] = useState("");
-  const { login, setProfile } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const avatars: {
@@ -52,7 +52,7 @@ export default function RegistrationForm() {
       const result = await registerUser(formData);
       console.log("User registered:", result);
       console.log(result.profile);
-      setProfile(result.profile);
+      login(result.profile);
       window.alert("User registered");
       setFormData({
         username: "",
@@ -66,7 +66,6 @@ export default function RegistrationForm() {
       console.error("Registration failed:", error);
       window.alert("Registration failed");
     }
-    login();
   };
 
   return (

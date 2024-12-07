@@ -1,11 +1,5 @@
-// import { Controller, Get, UseGuards } from '@nestjs/common';
-// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
-// @Controller('profile')
-// export class ProfileController {
-//   //   @UseGuards(JwtAuthGuard)
-//   @Get()
-//   getProfile() {
-//     return { message: 'This is a protected route' };
-//   }
-// }
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}

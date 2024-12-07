@@ -23,8 +23,9 @@ export default function Messages() {
   };
 
   useEffect(() => {
+    console.log("Profile in Messages component:", profile);
     fetchChats();
-  }, []);
+  }, [profile]);
 
   if (loading) return <div>Loading...</div>;
 

@@ -4,12 +4,14 @@ export const sendMessage = async (
   content: string
 ) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/chats/${chatId}/messages`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Обов'язково!
+          Authorization: `Bearer ${token}`,
         },
         //   headers: getHeaders(),
         body: JSON.stringify({ senderId: senderId, content }),

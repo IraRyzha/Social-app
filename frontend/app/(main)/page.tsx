@@ -5,7 +5,7 @@ import { IPost } from "@/entities/post/model/types";
 import { Post } from "@/entities/post/index";
 import CreatePostForm from "@/features/create-post/ui/create-post-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Button from "@/shared/ui/button/button"; // Додайте компонент пагінації
 import Pagination from "@/features/pagination/pagination";
 
@@ -18,7 +18,7 @@ export default function Home() {
   const searchParams = useSearchParams(); // Для роботи з URL-параметрами
   const { profile, isAuthenticated } = useAuth();
 
-  const pageSize = 10;
+  const pageSize = 8;
   const currentPage = Math.max(1, Number(searchParams.get("page") || "1")); // Отримуємо номер сторінки з URL
 
   const handleCreating = () => {
@@ -39,22 +39,25 @@ export default function Home() {
     }
   };
 
-  const fetchFriendsPosts = async (page: number) => {
-    try {
-      if (!profile) {
-        router.push("auth");
-        return;
+  const fetchFriendsPosts = useCallback(
+    async (page: number) => {
+      try {
+        if (!profile) {
+          router.push("auth");
+          return;
+        }
+        const response = await getUserFriendsPosts(profile.user_id, {
+          page,
+          pageSize,
+        });
+        setPosts(response.posts);
+        setTotal(response.total);
+      } catch (error) {
+        console.error("Error fetching friends' posts:", error);
       }
-      const response = await getUserFriendsPosts(profile.user_id, {
-        page,
-        pageSize,
-      });
-      setPosts(response.posts);
-      setTotal(response.total);
-    } catch (error) {
-      console.error("Error fetching friends' posts:", error);
-    }
-  };
+    },
+    [profile, router, pageSize] // Додаємо залежності
+  );
 
   useEffect(() => {
     if (activeTab === "all") {
@@ -62,7 +65,7 @@ export default function Home() {
     } else {
       fetchFriendsPosts(currentPage);
     }
-  }, [activeTab, currentPage]); // Залежить від вкладки та сторінки
+  }, [activeTab, currentPage, fetchFriendsPosts]); // Залежить від вкладки та сторінки
 
   const handlePageChange = (page: number) => {
     router.push(`/?page=${page}`); // Додаємо номер сторінки до URL

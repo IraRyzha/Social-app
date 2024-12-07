@@ -1,6 +1,7 @@
 export const createChat = async (isGroup: boolean, memberIds: string[]) => {
   console.log(memberIds);
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/chats`,
       {
@@ -8,6 +9,7 @@ export const createChat = async (isGroup: boolean, memberIds: string[]) => {
         // headers: getHeaders(),
         headers: {
           "Content-Type": "application/json", // Обов'язково!
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ isGroup: isGroup, memberIds: memberIds }),
       }

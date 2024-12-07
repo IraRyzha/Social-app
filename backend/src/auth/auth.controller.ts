@@ -1,13 +1,26 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { UsersService } from 'src/users/users.service';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService
+  ) {}
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -18,5 +31,13 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getProfile(@Req() req) {
+    const userId = req.user.user_id; // ID користувача з токена
+    const profile = await this.usersService.getProfile(userId); // Отримання профілю з бази даних
+    return profile; // Повертаємо профіль у форматі IProfile
   }
 }

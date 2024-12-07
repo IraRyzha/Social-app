@@ -33,13 +33,22 @@ export class UsersController {
   @Get('by-filters')
   async getUsersByFilters(
     @Query('keywords') keywords: string,
-    @Query('sortBy') sortBy: 'date' | 'popularity'
+    @Query('sortBy') sortBy: 'date' | 'popularity',
+    @Query('page') page: number = 1, // Параметр сторінки
+    @Query('pageSize') pageSize: number = 10 // Параметр кількості записів на сторінку
   ) {
     console.log('Keywords:', keywords);
     console.log('SortBy:', sortBy);
-    return await this.usersService.getUsersByFilters(keywords, sortBy);
-  }
+    console.log('Page:', page);
+    console.log('PageSize:', pageSize);
 
+    return await this.usersService.getUsersByFilters(
+      keywords,
+      sortBy,
+      page,
+      pageSize
+    );
+  }
   @Get(':id/posts')
   async getUserPosts(@Param('id') id: string) {
     return await this.usersService.getPostsByUserId(id);

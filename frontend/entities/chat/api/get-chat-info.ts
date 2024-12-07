@@ -5,12 +5,14 @@ export const getChatInfo = async (
   userId: string
 ): Promise<IChatInfo> => {
   try {
+    const token = localStorage.getItem("token");
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/chats/${chatId}/info`, // Використовуємо GET-запит до конкретного чату
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ userId }),
       }

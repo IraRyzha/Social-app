@@ -5,14 +5,16 @@ import {
   Param,
   Body,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { SendMessageDto } from './dto/send-message.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 // import { CreateChatDto, SendMessageDto } from './dto';
 // import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('chats')
 export class ChatsController {
   constructor(private readonly chatService: ChatsService) {}
