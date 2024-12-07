@@ -13,4 +13,9 @@ interface IPost {
   categories: TCategory[] | [];
 }
 
-export type { IPost };
+interface IGetPostsResponse {
+  posts: IPost[]; // Масив постів
+  total: number; // Загальна кількість постів
+}
+
+export type { IPost, IGetPostsResponse };

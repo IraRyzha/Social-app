@@ -4,17 +4,22 @@ import { getPosts, getUserFriendsPosts } from "@/entities/post/index";
 import { IPost } from "@/entities/post/model/types";
 import { Post } from "@/entities/post/index";
 import CreatePostForm from "@/features/create-post/ui/create-post-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Button from "@/shared/ui/button/button";
+import Button from "@/shared/ui/button/button"; // Додайте компонент пагінації
+import Pagination from "@/features/pagination/pagination";
 
 export default function Home() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"all" | "friends">("all");
-
-  const { profile, isAuthenticated } = useAuth();
+  const [total, setTotal] = useState(0); // Загальна кількість постів
   const router = useRouter();
+  const searchParams = useSearchParams(); // Для роботи з URL-параметрами
+  const { profile, isAuthenticated } = useAuth();
+
+  const pageSize = 10;
+  const currentPage = Math.max(1, Number(searchParams.get("page") || "1")); // Отримуємо номер сторінки з URL
 
   const handleCreating = () => {
     if (!isAuthenticated) {
@@ -24,29 +29,44 @@ export default function Home() {
     setIsCreating((prev) => !prev);
   };
 
-  const fetchAllPosts = async () => {
-    const response: IPost[] = await getPosts();
-    console.log(response);
-    setPosts(response);
+  const fetchAllPosts = async (page: number) => {
+    try {
+      const response = await getPosts({ page, pageSize });
+      setPosts(response.posts);
+      setTotal(response.total);
+    } catch (error) {
+      console.error("Error fetching all posts:", error);
+    }
   };
 
-  const fetchFriendsPosts = async () => {
-    if (!profile) {
-      router.push("auth");
-      return;
+  const fetchFriendsPosts = async (page: number) => {
+    try {
+      if (!profile) {
+        router.push("auth");
+        return;
+      }
+      const response = await getUserFriendsPosts(profile.user_id, {
+        page,
+        pageSize,
+      });
+      setPosts(response.posts);
+      setTotal(response.total);
+    } catch (error) {
+      console.error("Error fetching friends' posts:", error);
     }
-    const response: IPost[] = await getUserFriendsPosts(profile.user_id);
-    console.log(response);
-    setPosts(response);
   };
 
   useEffect(() => {
     if (activeTab === "all") {
-      fetchAllPosts();
+      fetchAllPosts(currentPage);
     } else {
-      fetchFriendsPosts();
+      fetchFriendsPosts(currentPage);
     }
-  }, [activeTab]);
+  }, [activeTab, currentPage]); // Залежить від вкладки та сторінки
+
+  const handlePageChange = (page: number) => {
+    router.push(`/?page=${page}`); // Додаємо номер сторінки до URL
+  };
 
   return (
     <div className="w-full h-auto flex flex-col gap-5">
@@ -89,8 +109,10 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full h-auto flex flex-col gap-5">
-        {posts.map((post) => {
-          return (
+        {posts.length === 0 ? (
+          <p className="text-center text-gray-500">have not any post</p>
+        ) : (
+          posts.map((post) => (
             <Post
               key={post.id}
               id={post.id}
@@ -100,9 +122,19 @@ export default function Home() {
               likes={post.likes}
               categories={post.categories}
             />
-          );
-        })}
+          ))
+        )}
       </div>
+
+      {/* Компонент пагінації */}
+      {total > pageSize && (
+        <Pagination
+          total={total}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

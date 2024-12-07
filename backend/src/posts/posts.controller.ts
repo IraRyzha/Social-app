@@ -14,24 +14,31 @@ export class PostsController {
   }
 
   @Get()
-  async getPosts() {
-    return await this.postsService.getAllPosts();
-  }
-
-  @Get('by-filters')
-  async getPostsByCategories(
-    @Query('categories') categories: string,
+  async getPosts(
+    @Query('page') page: number = 1,
+    @Query('pageSize') pageSize: number = 10,
+    @Query('categories') categories?: string,
     @Query('keywords') keywords?: string,
     @Query('sortBy') sortBy: 'date' | 'popularity' = 'date'
-  ): Promise<any[]> {
-    const categoryArray = categories === 'all' ? [] : categories.split(',');
-    return this.postsService.getPostsByFilters(keywords, categoryArray, sortBy);
+  ) {
+    const categoryArray =
+      categories === 'all' || !categories ? [] : categories.split(',');
+    return await this.postsService.getPosts({
+      page,
+      pageSize,
+      keywords,
+      categories: categoryArray,
+      sortBy,
+    });
   }
 
   @Get('friends')
-  async getFriendsPosts(@Query('userId') userId: string) {
-    console.log('search friends post user with id' + userId);
-    return this.postsService.getFriendsPosts(userId);
+  async getFriendsPosts(
+    @Query('userId') userId: string,
+    @Query('page') page: number = 1,
+    @Query('pageSize') pageSize: number = 10
+  ) {
+    return await this.postsService.getFriendsPosts(userId, page, pageSize);
   }
 
   @Get('post/:id')

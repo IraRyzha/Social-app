@@ -1,9 +1,18 @@
-import { IPost } from "../model/types";
+import { IGetPostsResponse } from "../model/types";
 
-export const getUserFriendsPosts = async (id: string): Promise<IPost[]> => {
+export const getUserFriendsPosts = async (
+  userId: string,
+  { page = 1, pageSize = 10 }: { page?: number; pageSize?: number }
+): Promise<IGetPostsResponse> => {
   try {
+    const queryParams = new URLSearchParams({
+      userId,
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+    });
+
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/friends?userId=${id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/friends?${queryParams}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -12,13 +21,14 @@ export const getUserFriendsPosts = async (id: string): Promise<IPost[]> => {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch posts: ${response.status} ${response.statusText}`
+        `Failed to fetch friends' posts: ${response.status} ${response.statusText}`
       );
     }
-    const data = await response.json();
+
+    const data: IGetPostsResponse = await response.json();
     return data;
   } catch (error) {
-    console.error("Error during fetching posts:", error);
+    console.error("Error during fetching friends' posts:", error);
     throw error;
   }
 };

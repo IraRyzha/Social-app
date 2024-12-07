@@ -53,53 +53,25 @@ export class PostsService {
     }
   }
 
-  async getAllPosts() {
-    const postResult = await this.databaseService.query(
-      `
-      SELECT 
-        posts.id,
-        posts.user_id,
-        posts.content AS text,
-        posts.created_at AS date,
-        users.id AS user_id,
-        profiles.user_name AS name,
-        profiles.avatar_name AS photo,
-        COUNT(DISTINCT likes.user_id) AS likes,  -- Підрахунок лайків для кожного поста
-        ARRAY_AGG(DISTINCT categories.name) AS categories
-      FROM posts
-      JOIN users ON posts.user_id = users.id
-      JOIN profiles ON profiles.user_id = users.id
-      LEFT JOIN post_categories ON posts.id = post_categories.post_id
-      LEFT JOIN categories ON post_categories.category_id = categories.id
-      LEFT JOIN likes ON posts.id = likes.post_id -- З'єднання з таблицею likes
-      GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
-      ORDER BY posts.created_at DESC
-      `
-    );
-
-    return postResult.rows.map((row) => ({
-      id: row.id,
-      user: {
-        id: row.user_id,
-        name: row.name,
-        photo: row.photo,
-      },
-      text: row.text,
-      date: row.date,
-      categories: row.categories || [],
-      likes: row.likes || 0, // Повертаємо кількість лайків
-    }));
-  }
-
-  async getPostsByFilters(
-    keywords: string,
-    categories: string[],
-    sortBy: 'date' | 'popularity'
-  ): Promise<any[]> {
+  async getPosts({
+    keywords = null,
+    categories = [],
+    sortBy = 'date', // 'date' або 'popularity'
+    page = 1,
+    pageSize = 10,
+  }: {
+    keywords?: string | null;
+    categories?: string[];
+    sortBy?: 'date' | 'popularity';
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ posts: any[]; total: number }> {
     const sortColumn =
       sortBy === 'popularity' ? 'likes_count' : 'posts.created_at';
+    const offset = (page - 1) * pageSize;
 
-    const query = `
+    // Основний запит для отримання постів
+    const postsQuery = `
       SELECT
         posts.id AS post_id,
         users.id AS user_id,
@@ -116,7 +88,7 @@ export class PostsService {
       LEFT JOIN categories ON post_categories.category_id = categories.id
       LEFT JOIN likes ON likes.post_id = posts.id
       WHERE
-        ($1::text IS NULL OR posts.content ILIKE '%' || $1 || '%') -- Пошук за словами
+        ($1::text IS NULL OR posts.content ILIKE '%' || $1 || '%') -- Пошук за ключовими словами
         AND (
           $2::text[] IS NULL OR EXISTS (
             SELECT 1
@@ -125,31 +97,165 @@ export class PostsService {
             WHERE pc.post_id = posts.id
             AND c.name = ANY($2)
           )
-        ) -- Пошук постів, які мають хоча б одну категорію із переданих
+        ) -- Фільтрація за категоріями
       GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
-      ORDER BY ${sortColumn} DESC; -- Динамічне сортування
+      ORDER BY ${sortColumn} DESC -- Сортування за датою або популярністю
+      LIMIT $3 OFFSET $4; -- Пагінація
     `;
 
-    const result = await this.databaseService.query(query, [
+    // Запит для підрахунку загальної кількості постів
+    const countQuery = `
+      SELECT COUNT(DISTINCT posts.id) AS total
+      FROM posts
+      LEFT JOIN post_categories ON posts.id = post_categories.post_id
+      LEFT JOIN categories ON post_categories.category_id = categories.id
+      WHERE
+        ($1::text IS NULL OR posts.content ILIKE '%' || $1 || '%') -- Пошук за ключовими словами
+        AND (
+          $2::text[] IS NULL OR EXISTS (
+            SELECT 1
+            FROM post_categories pc
+            JOIN categories c ON pc.category_id = c.id
+            WHERE pc.post_id = posts.id
+            AND c.name = ANY($2)
+          )
+        ) -- Фільтрація за категоріями
+    `;
+
+    // Виконання запитів
+    const postsResult = await this.databaseService.query(postsQuery, [
+      keywords || null,
+      categories.length ? categories : null,
+      pageSize,
+      offset,
+    ]);
+
+    const countResult = await this.databaseService.query(countQuery, [
       keywords || null,
       categories.length ? categories : null,
     ]);
 
-    return result.rows.map((row) => ({
-      id: row.post_id,
-      user: {
-        id: row.user_id,
-        name: row.name,
-        photo: row.photo || 'user', // Значення за замовчуванням, якщо фото відсутнє
-      },
-      text: row.post_text,
-      date: row.post_date,
-      categories: row.categories || [],
-      likes: Number(row.likes_count) || 0, // Повертаємо кількість лайків
-    }));
+    const total = Number(countResult.rows[0]?.total || 0);
+
+    // Повертаємо пости та загальну кількість
+    return {
+      posts: postsResult.rows.map((row) => ({
+        id: row.post_id,
+        user: {
+          id: row.user_id,
+          name: row.name,
+          photo: row.photo || 'default-avatar', // Значення за замовчуванням
+        },
+        text: row.post_text,
+        date: row.post_date,
+        categories: row.categories || [],
+        likes: Number(row.likes_count) || 0, // Кількість лайків
+      })),
+      total,
+    };
   }
 
-  async getFriendsPosts(userId: string) {
+  // async getAllPosts() {
+  //   const postResult = await this.databaseService.query(
+  //     `
+  //     SELECT
+  //       posts.id,
+  //       posts.user_id,
+  //       posts.content AS text,
+  //       posts.created_at AS date,
+  //       users.id AS user_id,
+  //       profiles.user_name AS name,
+  //       profiles.avatar_name AS photo,
+  //       COUNT(DISTINCT likes.user_id) AS likes,  -- Підрахунок лайків для кожного поста
+  //       ARRAY_AGG(DISTINCT categories.name) AS categories
+  //     FROM posts
+  //     JOIN users ON posts.user_id = users.id
+  //     JOIN profiles ON profiles.user_id = users.id
+  //     LEFT JOIN post_categories ON posts.id = post_categories.post_id
+  //     LEFT JOIN categories ON post_categories.category_id = categories.id
+  //     LEFT JOIN likes ON posts.id = likes.post_id -- З'єднання з таблицею likes
+  //     GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
+  //     ORDER BY posts.created_at DESC
+  //     `
+  //   );
+
+  //   return postResult.rows.map((row) => ({
+  //     id: row.id,
+  //     user: {
+  //       id: row.user_id,
+  //       name: row.name,
+  //       photo: row.photo,
+  //     },
+  //     text: row.text,
+  //     date: row.date,
+  //     categories: row.categories || [],
+  //     likes: row.likes || 0, // Повертаємо кількість лайків
+  //   }));
+  // }
+
+  // async getPostsByFilters(
+  //   keywords: string,
+  //   categories: string[],
+  //   sortBy: 'date' | 'popularity'
+  // ): Promise<any[]> {
+  //   const sortColumn =
+  //     sortBy === 'popularity' ? 'likes_count' : 'posts.created_at';
+
+  //   const query = `
+  //     SELECT
+  //       posts.id AS post_id,
+  //       users.id AS user_id,
+  //       profiles.user_name AS name,
+  //       profiles.avatar_name AS photo,
+  //       posts.content AS post_text,
+  //       posts.created_at AS post_date,
+  //       COUNT(DISTINCT likes.user_id) AS likes_count, -- Підрахунок унікальних лайків
+  //       COALESCE(ARRAY_AGG(DISTINCT categories.name), '{}') AS categories -- Категорії поста
+  //     FROM posts
+  //     JOIN users ON posts.user_id = users.id
+  //     JOIN profiles ON profiles.user_id = users.id
+  //     LEFT JOIN post_categories ON posts.id = post_categories.post_id
+  //     LEFT JOIN categories ON post_categories.category_id = categories.id
+  //     LEFT JOIN likes ON likes.post_id = posts.id
+  //     WHERE
+  //       ($1::text IS NULL OR posts.content ILIKE '%' || $1 || '%') -- Пошук за словами
+  //       AND (
+  //         $2::text[] IS NULL OR EXISTS (
+  //           SELECT 1
+  //           FROM post_categories pc
+  //           JOIN categories c ON pc.category_id = c.id
+  //           WHERE pc.post_id = posts.id
+  //           AND c.name = ANY($2)
+  //         )
+  //       ) -- Пошук постів, які мають хоча б одну категорію із переданих
+  //     GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
+  //     ORDER BY ${sortColumn} DESC; -- Динамічне сортування
+  //   `;
+
+  //   const result = await this.databaseService.query(query, [
+  //     keywords || null,
+  //     categories.length ? categories : null,
+  //   ]);
+
+  //   return result.rows.map((row) => ({
+  //     id: row.post_id,
+  //     user: {
+  //       id: row.user_id,
+  //       name: row.name,
+  //       photo: row.photo || 'user', // Значення за замовчуванням, якщо фото відсутнє
+  //     },
+  //     text: row.post_text,
+  //     date: row.post_date,
+  //     categories: row.categories || [],
+  //     likes: Number(row.likes_count) || 0, // Повертаємо кількість лайків
+  //   }));
+  // }
+
+  async getFriendsPosts(
+    userId: string,
+    page?: number,
+    pageSize?: number
+  ): Promise<{ posts: any[]; total?: number }> {
     const friendIdsResult = await this.databaseService.query(
       `SELECT user_id FROM followers WHERE follower_id = $1`,
       [userId]
@@ -157,11 +263,79 @@ export class PostsService {
     const friendIds = friendIdsResult.rows.map((row) => row.user_id);
 
     if (friendIds.length === 0) {
-      return [];
+      return { posts: [], total: 0 };
     }
 
-    const postsResult = await this.databaseService.query(
-      `
+    // Запит для отримання загальної кількості постів
+    const countQuery = `
+      SELECT COUNT(*) as total
+      FROM posts
+      WHERE posts.user_id = ANY($1)
+    `;
+    const countResult = await this.databaseService.query(countQuery, [
+      friendIds,
+    ]);
+    const total = Number(countResult.rows[0]?.total || 0);
+
+    // Якщо пагінація не вказана, повертаємо всі пости
+    if (!page || !pageSize) {
+      const postsResult = await this.databaseService.query(
+        `
+        SELECT 
+          posts.id,
+          posts.user_id,
+          posts.content AS text,
+          posts.created_at AS date,
+          users.id AS user_id,
+          profiles.user_name AS name,
+          profiles.avatar_name AS photo,
+          ARRAY_AGG(categories.name) AS categories
+        FROM posts
+        JOIN users ON posts.user_id = users.id
+        JOIN profiles ON profiles.user_id = users.id
+        LEFT JOIN post_categories ON posts.id = post_categories.post_id
+        LEFT JOIN categories ON post_categories.category_id = categories.id
+        WHERE posts.user_id = ANY($1)
+        GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
+        ORDER BY posts.created_at DESC
+        `,
+        [friendIds]
+      );
+
+      const likeCounts = await this.databaseService.query(
+        `
+        SELECT post_id, COUNT(*) as like_count
+        FROM likes
+        GROUP BY post_id
+        `
+      );
+
+      const likeCountMap = Object.fromEntries(
+        likeCounts.rows.map((row) => [row.post_id, row.like_count])
+      );
+
+      return {
+        posts: postsResult.rows.map((row) => ({
+          id: row.id,
+          user: {
+            id: row.user_id,
+            name: row.name,
+            photo: row.photo,
+          },
+          text: row.text,
+          date: row.date,
+          categories: row.categories || [],
+          likes: likeCountMap[row.id] || 0,
+        })),
+        total,
+      };
+    }
+
+    // Розрахунок зміщення для пагінації
+    const offset = (page - 1) * pageSize;
+
+    // Запит для отримання постів з пагінацією
+    const postsQuery = `
       SELECT 
         posts.id,
         posts.user_id,
@@ -179,9 +353,14 @@ export class PostsService {
       WHERE posts.user_id = ANY($1)
       GROUP BY posts.id, users.id, profiles.user_name, profiles.avatar_name
       ORDER BY posts.created_at DESC
-      `,
-      [friendIds]
-    );
+      LIMIT $2 OFFSET $3
+    `;
+
+    const postsResult = await this.databaseService.query(postsQuery, [
+      friendIds,
+      pageSize,
+      offset,
+    ]);
 
     const likeCounts = await this.databaseService.query(
       `
@@ -195,18 +374,21 @@ export class PostsService {
       likeCounts.rows.map((row) => [row.post_id, row.like_count])
     );
 
-    return postsResult.rows.map((row) => ({
-      id: row.id,
-      user: {
-        id: row.user_id,
-        name: row.name,
-        photo: row.photo,
-      },
-      text: row.text,
-      date: row.date,
-      categories: row.categories || [],
-      likes: likeCountMap[row.id] || 0, // Додаємо кількість лайків
-    }));
+    return {
+      posts: postsResult.rows.map((row) => ({
+        id: row.id,
+        user: {
+          id: row.user_id,
+          name: row.name,
+          photo: row.photo,
+        },
+        text: row.text,
+        date: row.date,
+        categories: row.categories || [],
+        likes: likeCountMap[row.id] || 0,
+      })),
+      total,
+    };
   }
 
   async getPost(id: string) {
