@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getChatMessages } from "@/entities/chat/api/get-chat-messages";
-import { sendMessage } from "@/entities/chat/api/send-message";
+// import { sendMessage } from "@/entities/chat/api/send-message";
 import { IChatInfo, IMessage } from "@/entities/chat/model/types";
 import { useAuth } from "@/config/AuthProvider";
 import Image from "next/image";
@@ -13,6 +13,7 @@ import sunImage from "@/shared/images/sunImage.jpeg";
 import sproutImage from "@/shared/images/sproutImage.jpeg";
 import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
+import { io } from "socket.io-client";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -28,6 +29,7 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState<string>("");
   const [chatInfo, setChatInfo] = useState<IChatInfo>();
   const [loading, setLoading] = useState(true);
+  const [socket, setSocket] = useState<any>(null);
   // const [error, setError] = useState(null);
   const { profile } = useAuth();
 
@@ -42,7 +44,7 @@ export default function Chat() {
 
   const fetchChatMessages = async () => {
     if (!params.id) return;
-    console.log(fetchChatMessages);
+    console.log("fetchChatMessages");
     const response = await getChatMessages(params.id as string);
     setMessages(response);
     setLoading(false);
@@ -50,25 +52,54 @@ export default function Chat() {
 
   useEffect(() => {
     if (profile && profile.user_id) {
+      const newSocket = io("http://localhost:3002/chat", {
+        transports: ["websocket"],
+        query: { chatId: params.id },
+      });
+
+      newSocket.on("connect", () => {
+        console.log("WebSocket підключено:", socket.id);
+      });
+
+      newSocket.on("connect_error", (err) => {
+        console.error("Помилка підключення WebSocket:", err);
+      });
+
+      setSocket(newSocket);
+
+      // Слухання нових повідомлень
+      newSocket.on("newMessage", (message: IMessage) => {
+        setMessages((prev) => [...prev, message]);
+      });
+
       fetchChatInfo();
       fetchChatMessages();
+
+      // Закриваємо WebSocket-з'єднання при розмонтуванні компонента
+      return () => {
+        newSocket.disconnect();
+      };
     }
   }, [params.id, profile]);
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !profile || !params.id) return; // Перевірка, чи є текст у повідомленні
+    if (!newMessage.trim() || !profile || !params.id || !socket) return;
 
-    try {
-      const message = await sendMessage(
-        params.id as string,
-        profile.user_id,
-        newMessage
-      );
-      setMessages((prev) => [...prev, message]); // Додаємо нове повідомлення до списку
-      setNewMessage(""); // Очищуємо поле вводу
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
+    console.log("handleSendMessage work");
+
+    const message = {
+      chatId: params.id,
+      senderId: profile.user_id,
+      content: newMessage,
+    };
+
+    // Надсилання повідомлення через WebSocket
+    socket.emit("sendMessage", message);
+
+    // Оновлюємо локальний список повідомлень
+    // setMessages((prev) => [...prev, { ...message, id: Date.now().toString() }]);
+    fetchChatMessages();
+    setNewMessage(""); // Очищуємо поле вводу
   };
 
   const getAvatarImage = () => {

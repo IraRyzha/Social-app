@@ -1,4 +1,5 @@
 export class SendMessageDto {
-  senderId: string; // ID відправника
+  chatId: string;
+  senderId: string;
   content: string;
 }

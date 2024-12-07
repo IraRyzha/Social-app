@@ -20,7 +20,6 @@ export class ChatsController {
   @Post()
   async createChat(@Body() createChatDto: CreateChatDto) {
     const { isGroup, memberIds } = createChatDto;
-    console.log(memberIds);
     return await this.chatService.createChat(isGroup, memberIds);
   }
 
