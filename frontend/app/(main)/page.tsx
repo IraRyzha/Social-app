@@ -5,70 +5,63 @@ import { IPost } from "@/entities/post/model/types";
 import { Post } from "@/entities/post/index";
 import CreatePostForm from "@/features/create-post/ui/create-post-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
-import Button from "@/shared/ui/button/button"; // Додайте компонент пагінації
+import { useState } from "react";
+import Button from "@/shared/ui/button/button";
 import Pagination from "@/features/pagination/pagination";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-  const [posts, setPosts] = useState<IPost[]>([]);
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"all" | "friends">("all");
-  const [total, setTotal] = useState(0); // Загальна кількість постів
   const router = useRouter();
-  const searchParams = useSearchParams(); // Для роботи з URL-параметрами
+  const searchParams = useSearchParams();
   const { profile, isAuthenticated } = useAuth();
 
   const pageSize = 8;
-  const currentPage = Math.max(1, Number(searchParams.get("page") || "1")); // Отримуємо номер сторінки з URL
+  const currentPage = Math.max(1, Number(searchParams.get("page") || "1"));
 
-  const handleCreating = () => {
-    if (!isAuthenticated) {
-      router.push("auth");
-      return;
-    }
-    setIsCreating((prev) => !prev);
-  };
-
-  const fetchAllPosts = async (page: number) => {
-    try {
-      const response = await getPosts({ page, pageSize });
-      setPosts(response.posts);
-      setTotal(response.total);
-    } catch (error) {
-      console.error("Error fetching all posts:", error);
-    }
-  };
-
-  const fetchFriendsPosts = useCallback(
-    async (page: number) => {
-      try {
-        if (!profile) {
-          router.push("auth");
-          return;
-        }
-        const response = await getUserFriendsPosts(profile.user_id, {
-          page,
+  const {
+    data: { posts = [], total = 0 } = {},
+    isLoading,
+    isError,
+  } = useQuery<{ posts: IPost[]; total: number }>({
+    queryKey: ["posts", activeTab, currentPage],
+    queryFn: async () => {
+      console.log("Fetching data from API...");
+      if (activeTab === "all") {
+        return await getPosts({ page: currentPage, pageSize: pageSize });
+      }
+      if (activeTab === "friends" && profile?.user_id) {
+        return await getUserFriendsPosts(profile.user_id, {
+          page: currentPage,
           pageSize,
         });
-        setPosts(response.posts);
-        setTotal(response.total);
-      } catch (error) {
-        console.error("Error fetching friends' posts:", error);
       }
+      return Promise.reject(
+        new Error("Profile is required for friends' posts")
+      );
     },
-    [profile, router, pageSize] // Додаємо залежності
-  );
+    enabled:
+      activeTab === "all" || (activeTab === "friends" && !!profile?.user_id),
+  });
 
-  useEffect(() => {
-    if (activeTab === "all") {
-      fetchAllPosts(currentPage);
-    } else {
-      fetchFriendsPosts(currentPage);
+  const checkIsAuth = () => {
+    if (!isAuthenticated) {
+      return false;
     }
-  }, [activeTab, currentPage, fetchFriendsPosts]); // Залежить від вкладки та сторінки
+    return true;
+  };
+
+  const handleCreating = () => {
+    if (!checkIsAuth()) {
+      router.push("auth");
+    } else {
+      setIsCreating((prev) => !prev);
+    }
+  };
 
   const handlePageChange = (page: number) => {
-    router.push(`/?page=${page}`); // Додаємо номер сторінки до URL
+    router.push(`/?page=${page}`);
   };
 
   return (
@@ -100,7 +93,13 @@ export default function Home() {
             all
           </button>
           <button
-            onClick={() => setActiveTab("friends")}
+            onClick={() => {
+              if (!checkIsAuth()) {
+                router.push("auth");
+              } else {
+                setActiveTab("friends");
+              }
+            }}
             className={`flex-1 py-1 text-center text-xs md:text-sm rounded-lg ${
               activeTab === "friends"
                 ? "bg-main-blue-light text-white"
@@ -112,24 +111,21 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full h-auto flex flex-col gap-5">
-        {posts.length === 0 ? (
-          <p className="text-center text-gray-500">have not any post</p>
-        ) : (
-          posts.map((post) => (
-            <Post
-              key={post.id}
-              id={post.id}
-              user={post.user}
-              text={post.text}
-              date={post.date}
-              likes={post.likes}
-              categories={post.categories}
-            />
-          ))
-        )}
+        {isLoading && <p>Loading...</p>}
+        {isError && <p>Error loading posts</p>}
+        {posts.map((post) => (
+          <Post
+            key={post.id}
+            id={post.id}
+            user={post.user}
+            text={post.text}
+            date={post.date}
+            likes={post.likes}
+            categories={post.categories}
+          />
+        ))}
       </div>
 
-      {/* Компонент пагінації */}
       {total > pageSize && (
         <Pagination
           total={total}

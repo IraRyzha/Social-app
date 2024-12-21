@@ -41,7 +41,7 @@ export default function Navigation() {
   return (
     <header className="w-full h-screen px-8 py-5 flex flex-col items-start justify-between gap-10 bg-white shadow-md">
       <div
-        className="w-full flex justify-center items-center gap-1 md:gap-3 cursor-pointer border border-slate-800"
+        className="w-full flex justify-center items-center gap-1 md:gap-3 cursor-pointer"
         onClick={() => router.replace("/")}
       >
         <Image
@@ -54,7 +54,7 @@ export default function Navigation() {
         <h1 className="text-xl md:text-3xl font-bold">flash</h1>
       </div>
 
-      <nav className="flex w-full h-full flex-col items-start justify-start gap-3 rounded-xl border border-slate-800">
+      <nav className="flex w-full h-full flex-col items-start justify-start gap-3 rounded-xl">
         {menuItems.map((menuItem) => {
           const Icon = iconComponents[menuItem.icon];
           const isActive = pathname === menuItem.link;
@@ -74,7 +74,7 @@ export default function Navigation() {
       </nav>
 
       <div
-        className="w-full flex items-center gap-3 cursor-pointer px-4 py-1 border border-slate-800"
+        className="w-full flex items-center gap-3 cursor-pointer px-4 py-1"
         onClick={handleAuth}
       >
         <span className="text-sm md:text-base font-semibold">

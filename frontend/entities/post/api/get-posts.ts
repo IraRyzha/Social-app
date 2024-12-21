@@ -17,8 +17,8 @@ export const getPosts = async ({
     const queryParams = new URLSearchParams({
       page: page.toString(),
       pageSize: pageSize.toString(),
-      keywords: keywords || "", // Якщо keywords не передано, передаємо порожній рядок
-      categories: categories || "", // Якщо categories не передано, передаємо порожній рядок
+      keywords: keywords || "",
+      categories: categories || "",
       sortBy,
     });
 
@@ -37,6 +37,7 @@ export const getPosts = async ({
     }
 
     const data = await response.json();
+
     return data;
   } catch (error) {
     console.error("Error during fetching posts:", error);
