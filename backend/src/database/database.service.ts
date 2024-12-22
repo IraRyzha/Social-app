@@ -8,6 +8,10 @@ export class DatabaseService implements OnModuleDestroy {
   private pool: Pool;
 
   constructor(private configService: ConfigService) {
+    console.log(
+      'DATABASE_URL:',
+      this.configService.get<string>('DATABASE_URL')
+    );
     this.pool = new Pool({
       connectionString: this.configService.get<string>('DATABASE_URL'),
     });
