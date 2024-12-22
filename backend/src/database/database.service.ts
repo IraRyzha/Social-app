@@ -9,11 +9,7 @@ export class DatabaseService implements OnModuleDestroy {
 
   constructor(private configService: ConfigService) {
     this.pool = new Pool({
-      host: this.configService.get<string>('DATABASE_HOST'),
-      port: this.configService.get<number>('DATABASE_PORT'),
-      user: this.configService.get<string>('DATABASE_USER'),
-      password: this.configService.get<string>('DATABASE_PASSWORD'),
-      database: this.configService.get<string>('DATABASE_NAME'),
+      connectionString: this.configService.get<string>('DATABASE_URL'),
     });
     // max: parseInt(process.env.DB_MAX_CONNECTIONS, 10) || 10,
     //   idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10) || 30000,

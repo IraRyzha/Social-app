@@ -7,10 +7,10 @@ services:
     environment:
       API_URL: ${API_URL:-http://localhost:3000} # Встановлюється як змінна середовища
       DATABASE_URL: ${DATABASE_URL} # Render автоматично створить цю змінну      DATABASE_HOST: db
-      DATABASE_NAME: dev_db
-      DATABASE_PASSWORD: devpassword
-      DATABASE_PORT: "5432"
-      DATABASE_USER: devuser
+      # DATABASE_NAME: dev_db
+      # DATABASE_PASSWORD: devpassword
+      # DATABASE_PORT: "5432"
+      # DATABASE_USER: devuser
       JWT_SECRET: ${JWT_SECRET}
       PORT: ${PORT:-3000}
     ports:
