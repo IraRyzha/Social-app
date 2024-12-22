@@ -4,8 +4,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      API_URL: http://localhost:3000
-      DATABASE_HOST: db
+      API_URL: ${API_URL} # Встановлюється як змінна середовища
+      DATABASE_URL: ${DATABASE_URL} # Render автоматично створить цю змінну      DATABASE_HOST: db
       DATABASE_NAME: dev_db
       DATABASE_PASSWORD: devpassword
       DATABASE_PORT: "5432"
