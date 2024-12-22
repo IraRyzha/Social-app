@@ -3,12 +3,13 @@ import { getProfile, IProfile, Profile } from "@/entities/profile";
 import { getPostsByUserId, IPost, Post } from "@/entities/post";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/config/AuthProvider";
+import { useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
 
 export default function UserProfile() {
   const [userProfile, setUserProfile] = useState<IProfile | null>(null);
   const [posts, setPosts] = useState<IPost[] | null>(null);
-  const { profile } = useAuth();
+  const profile = useAppSelector(authSlice.selectors.profile);
 
   const params = useParams();
   const router = useRouter();

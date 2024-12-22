@@ -13,9 +13,9 @@ export async function createPost(formData: PostFormData) {
     if (!response.ok) {
       throw new Error("Login failed");
     }
-    const data = await response.json();
-    console.error(data);
-    return data;
+    console.log("function createPost response");
+    console.log(response);
+    return await response.json();
   } catch (error) {
     console.error("Error during login:", error);
     throw error;

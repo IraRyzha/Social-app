@@ -6,13 +6,14 @@ import sproutImage from "@/shared/images/sproutImage.jpeg";
 import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/config/AuthProvider";
 import { TCategory } from "@/shared/types/types";
 import { HeartIcon } from "@/shared/ui/icons/heart-icon";
 import { useEffect, useState } from "react";
 import { checkLike } from "../api/check-like";
 import { toggleLike } from "../api/toggle-like";
 import { HeartFilledIcon } from "@/shared/ui/icons/heart-filled-icon";
+import { useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -41,7 +42,7 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
     typeof likes === "string" ? Number(likes) : likes
   );
   const router = useRouter();
-  const { profile } = useAuth();
+  const profile = useAppSelector(authSlice.selectors.profile);
 
   const formatTimeAgo = (date: string | number) => {
     const dateInMillis = new Date(date).getTime();

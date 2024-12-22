@@ -1,13 +1,14 @@
 "use client";
 import Image from "next/image";
 import { FlashCoin } from "@/shared/ui/icons";
-import { useAuth } from "@/config/AuthProvider";
 import flashLogo from "@/shared/images/flashLogo.webp";
 import userImage from "@/shared/images/userImage.png";
 import sunImage from "@/shared/images/sunImage.jpeg";
 import sproutImage from "@/shared/images/sproutImage.jpeg";
 import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
+import { useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -19,7 +20,8 @@ const avatars = [
 ];
 
 export default function BaseProfile() {
-  const { isAuthenticated, profile } = useAuth();
+  const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
+  const profile = useAppSelector(authSlice.selectors.profile);
 
   if (!isAuthenticated || !profile) {
     return (

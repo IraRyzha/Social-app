@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { registerUser } from "../model/registrationModel";
 import { RegisterFormData } from "../model/types";
-import { useAuth } from "@/config/AuthProvider";
 import userImage from "../../../shared/images/userImage.png";
 import sunImage from "../../../shared/images/sunImage.jpeg";
 import sproutImage from "../../../shared/images/sproutImage.jpeg";
 import fireImage from "../../../shared/images/fireImage.jpeg";
 import rainbowImage from "../../../shared/images/rainbowImage.jpeg";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/config/hooks";
+import authSlice from "../model/authSlice";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -19,8 +20,8 @@ export default function RegistrationForm() {
     avatar_name: "",
   });
   const [selectedAvatar, setSelectedAvatar] = useState("");
-  const { login } = useAuth();
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const avatars: {
     name: RegisterFormData["avatar_name"];
@@ -48,11 +49,9 @@ export default function RegistrationForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("formData before request:", formData);
       const result = await registerUser(formData);
-      console.log("User registered:", result);
       console.log(result.profile);
-      login(result.profile);
+      dispatch(authSlice.actions.login(result.profile));
       window.alert("User registered");
       setFormData({
         username: "",

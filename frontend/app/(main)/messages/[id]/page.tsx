@@ -4,9 +4,10 @@ import { useParams } from "next/navigation";
 import { getChatMessages } from "@/entities/chat/api/get-chat-messages";
 // import { sendMessage } from "@/entities/chat/api/send-message";
 import { IChatInfo, IMessage } from "@/entities/chat/model/types";
-import { useAuth } from "@/config/AuthProvider";
 import Image from "next/image";
 import { getChatInfo } from "@/entities/chat/api/get-chat-info";
+import authSlice from "@/features/auth/model/authSlice";
+import { useAppSelector } from "@/config/hooks";
 import flashLogo from "@/shared/images/flashLogo.webp";
 import userImage from "@/shared/images/userImage.png";
 import sunImage from "@/shared/images/sunImage.jpeg";
@@ -31,7 +32,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<undefined | Socket>(undefined);
   // const [error, setError] = useState(null);
-  const { profile } = useAuth();
+  const profile = useAppSelector(authSlice.selectors.profile);
 
   const params = useParams();
   // const router = useRouter();

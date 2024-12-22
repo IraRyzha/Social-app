@@ -12,8 +12,6 @@ export const checkLike = async (
       }
     );
     const data = await response.json();
-    console.log("checkLike");
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error during check like:", error);

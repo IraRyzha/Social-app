@@ -10,12 +10,13 @@ import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { IProfile } from "@/entities/profile";
 import Button from "@/shared/ui/button/button";
 import { followUser } from "../api/follow-user";
-import { useAuth } from "@/config/AuthProvider";
 import { useEffect, useState } from "react";
 import { unfollowUser } from "../api/unfollow-user";
 import { checkFollowing } from "../api/check-following";
 import { createChat } from "@/entities/chat/api/create-chat";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -34,7 +35,7 @@ export default function DetailedProfile({
   isOwn: boolean;
 }) {
   const [isFollowing, setIsFollowing] = useState(false);
-  const { profile } = useAuth();
+  const profile = useAppSelector(authSlice.selectors.profile);
   const router = useRouter();
 
   const profileAvatar = avatars.find(

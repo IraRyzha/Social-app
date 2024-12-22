@@ -13,7 +13,6 @@ export default function AuthForm() {
         {isRegistering ? "Register" : "Login"}
       </h2>
 
-      {/* Умовний рендеринг форм */}
       {isRegistering ? <RegistrationForm /> : <LoginForm />}
 
       <p className="mt-4 text-center text-gray-600">

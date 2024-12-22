@@ -1,10 +1,12 @@
 "use client";
-import { useAuth } from "@/config/AuthProvider";
 import { useState } from "react";
 import { createPost } from "../model/create-post";
 import Button from "@/shared/ui/button/button";
 import { categories } from "@/shared/constants/categories";
 import { TCategory } from "@/shared/types/types";
+import { useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   toggleCreate?: () => void;
@@ -13,7 +15,16 @@ interface Props {
 export default function CreatePostForm({ toggleCreate }: Props) {
   const [text, setText] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<TCategory[]>([]);
-  const { isAuthenticated, profile } = useAuth();
+  const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
+  const profile = useAppSelector(authSlice.selectors.profile);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
 
   const handleCategoryClick = (category: TCategory) => {
     setSelectedCategories((prevCategories) =>
@@ -29,7 +40,7 @@ export default function CreatePostForm({ toggleCreate }: Props) {
       throw new Error("cannot create post without auth");
     }
     if (profile) {
-      createPost({
+      mutation.mutate({
         user_id: profile.user_id,
         content: text,
         categories: selectedCategories,

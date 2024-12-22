@@ -1,21 +1,33 @@
 "use client";
-import { useAuth } from "@/config/AuthProvider";
 import { getPosts, getUserFriendsPosts } from "@/entities/post/index";
 import { IPost } from "@/entities/post/model/types";
 import { Post } from "@/entities/post/index";
 import CreatePostForm from "@/features/create-post/ui/create-post-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/shared/ui/button/button";
 import Pagination from "@/features/pagination/pagination";
 import { useQuery } from "@tanstack/react-query";
+import { useAppDispatch, useAppSelector } from "@/config/hooks";
+import authSlice, { fetchUser } from "@/features/auth/model/authSlice";
 
 export default function Home() {
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<"all" | "friends">("all");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { profile, isAuthenticated } = useAuth();
+  const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
+  const profile = useAppSelector(authSlice.selectors.profile);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    console.log("useEffect dispatch(fetchUser());");
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  console.log("isAuthenticated from selectors: " + isAuthenticated);
+  console.log("profile from selectors");
+  console.log(profile);
 
   const pageSize = 8;
   const currentPage = Math.max(1, Number(searchParams.get("page") || "1"));
@@ -25,7 +37,7 @@ export default function Home() {
     isLoading,
     isError,
   } = useQuery<{ posts: IPost[]; total: number }>({
-    queryKey: ["posts", activeTab, currentPage],
+    queryKey: ["posts"],
     queryFn: async () => {
       console.log("Fetching data from API...");
       if (activeTab === "all") {

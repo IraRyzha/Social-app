@@ -14,7 +14,6 @@ export async function loginUser(formData: LoginFormData) {
       throw new Error("Login failed");
     }
     const data = await response.json();
-    console.log("loginUser WORK token: " + data.access_token);
     localStorage.setItem("token", data.access_token);
     return data;
   } catch (error) {

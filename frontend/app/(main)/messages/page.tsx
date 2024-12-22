@@ -1,8 +1,9 @@
 "use client";
-import { useAuth } from "@/config/AuthProvider";
+import { useAppSelector } from "@/config/hooks";
 import { Chat } from "@/entities/chat";
 import { getUserChats } from "@/entities/chat/api/get-user-chats";
 import { IChat } from "@/entities/chat/model/types";
+import authSlice from "@/features/auth/model/authSlice";
 import React, { useEffect, useState } from "react";
 // import axios from "axios";
 // import { useRouter } from "next/router";
@@ -10,7 +11,7 @@ import React, { useEffect, useState } from "react";
 export default function Messages() {
   const [chats, setChats] = useState<IChat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { profile } = useAuth();
+  const profile = useAppSelector(authSlice.selectors.profile);
   // const router = useRouter();
 
   // Завантаження чатів

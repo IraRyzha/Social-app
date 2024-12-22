@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { loginUser } from "../model/loginModel";
-import { useAuth } from "@/config/AuthProvider";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/config/hooks";
+import authSlice from "../model/authSlice";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const { login } = useAuth();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const handleChange = (
@@ -22,8 +23,7 @@ export default function LoginForm() {
     e.preventDefault();
     try {
       const result = await loginUser(formData);
-      console.log("User logged in:", result);
-      login(result.profile);
+      dispatch(authSlice.actions.login(result.profile));
       setFormData({
         email: "",
         password: "",

@@ -10,7 +10,7 @@ export class PostsController {
 
   @Post()
   createPost(@Body() postDto: CreatePostDto) {
-    this.postsService.createPost(postDto);
+    return this.postsService.createPost(postDto);
   }
 
   @Get()

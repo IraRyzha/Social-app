@@ -2,7 +2,6 @@
 import Image from "next/image";
 import flashLogo from "@/shared/images/flashLogo.webp";
 import { LoginIcon } from "../../shared/ui/icons/login-icon";
-import { useAuth } from "@/config/AuthProvider";
 import { useRouter } from "next/navigation";
 import { LogoutIcon } from "../../shared/ui/icons/logout-icon";
 import { menuItems } from "@/shared/common/constants";
@@ -16,6 +15,8 @@ import {
 } from "@/shared/ui/icons/index";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
 
 const iconComponents: Record<IconKey, () => JSX.Element> = {
   home: HomeIcon,
@@ -26,13 +27,16 @@ const iconComponents: Record<IconKey, () => JSX.Element> = {
 };
 
 export default function Navigation() {
-  const { isAuthenticated, logout } = useAuth();
+  const isAuthenticated = useAppSelector(authSlice.selectors.isAuthenticated);
+  const dispatch = useAppDispatch();
+
   const router = useRouter();
   const pathname = usePathname();
 
   const handleAuth = () => {
     if (isAuthenticated) {
-      logout();
+      dispatch(authSlice.actions.logout());
+      localStorage.removeItem("token");
     } else {
       router.push("auth");
     }

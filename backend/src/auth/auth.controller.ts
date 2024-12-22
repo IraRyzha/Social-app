@@ -36,8 +36,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Req() req) {
-    const userId = req.user.user_id; // ID користувача з токена
-    const profile = await this.usersService.getProfile(userId); // Отримання профілю з бази даних
-    return profile; // Повертаємо профіль у форматі IProfile
+    const userId = req.user.user_id;
+    const profile = await this.usersService.getProfile(userId);
+    return profile;
   }
 }
