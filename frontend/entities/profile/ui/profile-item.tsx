@@ -7,8 +7,9 @@ import fireImage from "@/shared/images/fireImage.jpeg";
 import rainbowImage from "@/shared/images/rainbowImage.jpeg";
 import { IProfile } from "@/entities/profile";
 
-// import { useRouter } from "next/navigation";
-// import { useAuth } from "@/config/AuthProvider";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/config/hooks";
+import authSlice from "@/features/auth/model/authSlice";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -24,8 +25,16 @@ export default function ProfileItem({
 }: {
   userProfile: IProfile;
 }) {
-  //   const router = useRouter();
-  //   const { profile } = useAuth();
+  const router = useRouter();
+  const profile = useAppSelector(authSlice.selectors.profile);
+
+  const handleUserProfile = () => {
+    if (!profile) {
+      router.push("auth");
+      return;
+    }
+    router.push(`users/${userProfile.user_id}`);
+  };
 
   const postOwnerAvatar = avatars.find(
     (avatar) => avatar.name === userProfile.avatar_name
@@ -33,7 +42,10 @@ export default function ProfileItem({
 
   return (
     <div className="flex justify-start items-center bg-white py-3 px-5 rounded-lg shadow-md">
-      <div className="flex items-center space-x-3">
+      <div
+        className="flex items-center space-x-3"
+        onClick={() => handleUserProfile()}
+      >
         <Image
           src={postOwnerAvatar ? postOwnerAvatar.image : userImage}
           width={100}
