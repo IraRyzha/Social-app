@@ -23,6 +23,7 @@ services:
 
   db:
     image: postgres:13
+    env_file: ./backend/.env
     environment:
       POSTGRES_DB: ${DATABASE_NAME} # Використовує змінні з .env
       POSTGRES_USER: ${DATABASE_USER}
