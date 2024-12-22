@@ -20,8 +20,6 @@ export class UsersService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    console.log(hashedPassword);
-
     // 1. Створення користувача в таблиці users
     const userResult = await this.databaseService.query(
       `INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id`,
