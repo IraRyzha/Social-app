@@ -111,7 +111,7 @@ export default function Chat() {
   //   return <div className="text-center text-red-500 mt-10">{error}</div>;
 
   return (
-    <div className="flex flex-col h-full w-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="flex flex-col h-[83vh] w-full inset-y-0 bg-white shadow-lg rounded-lg overflow-hidden">
       {chatInfo && (
         <div className="flex items-center space-x-3 p-3">
           <Image

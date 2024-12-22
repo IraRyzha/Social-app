@@ -80,7 +80,7 @@ export default function RegistrationForm() {
               width={100}
               height={100}
               onClick={() => handleAvatarSelect(avatar.name)}
-              className={`w-13 h-13 md:w-16 md:h-16 cursor-pointer rounded-full border-2 ${
+              className={`w-12 h-12 md:w-16 md:h-16 cursor-pointer rounded-full border-2 ${
                 selectedAvatar === avatar.name
                   ? "border-main-blue"
                   : "border-gray-300"

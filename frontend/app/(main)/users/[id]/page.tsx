@@ -39,7 +39,7 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center">
+    <div className="w-full min-h-screen flex flex-col items-center overflow-hidden">
       <button
         onClick={() => router.back()}
         className="self-start mb-3 text-main-blue-light hover:underline flex items-center text-sm font-semibold"

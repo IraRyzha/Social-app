@@ -19,7 +19,7 @@ const Pagination = ({
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="flex items-center justify-center mt-4">
+    <div className="flex items-center justify-center mt-3 mb-12">
       {/* Кнопка для попередньої сторінки */}
       <button
         onClick={() => onPageChange(currentPage - 1)}

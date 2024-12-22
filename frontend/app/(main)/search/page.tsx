@@ -80,6 +80,8 @@ export default function Search() {
     });
     setFilteredUsers(response.profiles);
     setTotal(response.total); // Загальна кількість користувачів
+    // console.log("fetchUsers");
+    // console.log(response);
   };
 
   useEffect(() => {
@@ -117,7 +119,7 @@ export default function Search() {
   };
 
   return (
-    <div className="w-full h-auto flex flex-col items-center transition duration-300 ease-in-out transform">
+    <div className="w-full h-full flex flex-col items-center transition duration-300 ease-in-out transform overflow-hidden z-10">
       {/* Search Input and Sort Select */}
       <div className="w-full max-w-md mb-3 mt-[2px] flex justify-center items-center gap-1">
         <input

@@ -25,9 +25,6 @@ export default function Home() {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  console.log("activeTab: ");
-  console.log(activeTab);
-
   const pageSize = 8;
   const currentPage = Math.max(1, Number(searchParams?.get("page") || "1"));
 
@@ -40,7 +37,7 @@ export default function Home() {
     queryFn: async () => {
       console.log("Fetching data from API...");
       if (activeTab === "all") {
-        return await getPosts({ page: currentPage || 1, pageSize: pageSize });
+        return await getPosts({ page: currentPage, pageSize: pageSize });
       }
       if (activeTab === "friends" && profile?.user_id) {
         return await getUserFriendsPosts(profile.user_id, {
@@ -53,6 +50,9 @@ export default function Home() {
       );
     },
   });
+
+  console.log("total: ");
+  console.log(total);
 
   const checkIsAuth = () => {
     if (!isAuthenticated) {
