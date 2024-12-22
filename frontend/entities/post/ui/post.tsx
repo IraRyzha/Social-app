@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import flashLogo from "@/shared/images/flashLogo.webp";
 import userImage from "@/shared/images/userImage.png";

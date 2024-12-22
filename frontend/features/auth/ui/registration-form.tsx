@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { registerUser } from "../model/registrationModel";

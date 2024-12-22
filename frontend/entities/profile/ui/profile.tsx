@@ -1,3 +1,4 @@
+"use client";
 import { IProfile } from "@/entities/profile";
 import BaseProfile from "./base-profile";
 import ProfileItem from "./profile-item";

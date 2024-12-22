@@ -1,3 +1,4 @@
+"use client";
 import { ChevronLeft } from "@/shared/ui/icons/chevron-left";
 import { ChevronRight } from "@/shared/ui/icons/chevron-right";
 import React from "react";
