@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(100) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   user_name VARCHAR(100),
@@ -23,51 +23,51 @@ CREATE TABLE profiles (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE followers (
+CREATE TABLE IF NOT EXISTS followers (
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   follower_id UUID REFERENCES users(id) ON DELETE CASCADE,
   PRIMARY KEY (user_id, follower_id)
 );
 
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE post_categories (
+CREATE TABLE IF NOT EXISTS post_categories (
   post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
   category_id INT REFERENCES categories(id) ON DELETE CASCADE,
   PRIMARY KEY (post_id, category_id)
 );
 
-CREATE TABLE likes (
+CREATE TABLE IF NOT EXISTS likes (
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, post_id)
 );
 
-CREATE TABLE chats (
+CREATE TABLE IF NOT EXISTS chats (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   is_group BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE chat_members (
+CREATE TABLE IF NOT EXISTS chat_members (
   chat_id UUID REFERENCES chats(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (chat_id, user_id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),      -- Унікальний ідентифікатор повідомлення
   chat_id UUID REFERENCES chats(id) ON DELETE CASCADE, -- Ідентифікатор чату
   sender_id UUID REFERENCES users(id) ON DELETE CASCADE, -- Ідентифікатор відправника
@@ -76,74 +76,13 @@ CREATE TABLE messages (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP       -- Дата створення повідомлення
 );
 
-CREATE TABLE user_settings (
+CREATE TABLE  IF NOT EXISTS user_settings (
   user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   language VARCHAR(10) DEFAULT 'en',
   notifications_enabled BOOLEAN DEFAULT TRUE,
   privacy_level VARCHAR(20) DEFAULT 'public'
 );
 
-CREATE TABLE wallets (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  balance DECIMAL(18, 8) DEFAULT 0,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE transactions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  sender_wallet_id UUID REFERENCES wallets(id) ON DELETE SET NULL,
-  receiver_wallet_id UUID REFERENCES wallets(id) ON DELETE SET NULL,
-  amount DECIMAL(18, 8) NOT NULL,
-  status VARCHAR(20) DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE tokens (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(50) UNIQUE NOT NULL,
-  exchange_rate DECIMAL(10, 4) NOT NULL DEFAULT 1.0
-);
-
-CREATE TABLE wallet_balances (
-  wallet_id UUID REFERENCES wallets(id) ON DELETE CASCADE,
-  token_id INT REFERENCES tokens(id) ON DELETE CASCADE,
-  balance DECIMAL(18, 8) DEFAULT 0,
-  PRIMARY KEY (wallet_id, token_id)
-);
-
-CREATE TABLE swap_transactions (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  from_token_id INT REFERENCES tokens(id) ON DELETE SET NULL,
-  to_token_id INT REFERENCES tokens(id) ON DELETE SET NULL,
-  from_amount DECIMAL(18, 8) NOT NULL,
-  to_amount DECIMAL(18, 8) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE loans (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  lender_wallet_id UUID REFERENCES wallets(id) ON DELETE SET NULL,
-  borrower_wallet_id UUID REFERENCES wallets(id) ON DELETE SET NULL,
-  token_id INT REFERENCES tokens(id) ON DELETE CASCADE,
-  amount DECIMAL(18, 8) NOT NULL,
-  interest_rate DECIMAL(5, 2) DEFAULT 5.0,
-  due_date TIMESTAMP,
-  status VARCHAR(20) DEFAULT 'active',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE loan_repayments (
-  id SERIAL PRIMARY KEY,
-  loan_id UUID REFERENCES loans(id) ON DELETE CASCADE,
-  amount DECIMAL(18, 8) NOT NULL,
-  payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Вставка тестових даних
-
--- Додавання категорій
 INSERT INTO categories (name)
 VALUES 
     ('lifestyle'),
