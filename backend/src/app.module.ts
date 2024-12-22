@@ -14,11 +14,8 @@ import { ChatsModule } from './chats/chats.module';
     UsersModule,
     PostsModule,
     ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'production'
-          ? '.env.production'
-          : '.env.development',
-      isGlobal: true,
+      isGlobal: true, // Робить ConfigModule доступним у всіх модулях без необхідності повторного імпорту
+      envFilePath: '.env', // Вказує, де шукати файл .env (можна змінити на інший шлях)
     }),
     DatabaseModule,
     ChatsModule,
