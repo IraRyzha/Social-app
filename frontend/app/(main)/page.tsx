@@ -25,23 +25,22 @@ export default function Home() {
     dispatch(fetchUser());
   }, [dispatch]);
 
-  console.log("isAuthenticated from selectors: " + isAuthenticated);
-  console.log("profile from selectors");
-  console.log(profile);
+  console.log("activeTab: ");
+  console.log(activeTab);
 
   const pageSize = 8;
-  const currentPage = Math.max(1, Number(searchParams.get("page") || "1"));
+  const currentPage = Math.max(1, Number(searchParams?.get("page") || "1"));
 
   const {
     data: { posts = [], total = 0 } = {},
     isLoading,
     isError,
   } = useQuery<{ posts: IPost[]; total: number }>({
-    queryKey: ["posts"],
+    queryKey: ["posts", currentPage],
     queryFn: async () => {
       console.log("Fetching data from API...");
       if (activeTab === "all") {
-        return await getPosts({ page: currentPage, pageSize: pageSize });
+        return await getPosts({ page: currentPage || 1, pageSize: pageSize });
       }
       if (activeTab === "friends" && profile?.user_id) {
         return await getUserFriendsPosts(profile.user_id, {
@@ -53,8 +52,6 @@ export default function Home() {
         new Error("Profile is required for friends' posts")
       );
     },
-    enabled:
-      activeTab === "all" || (activeTab === "friends" && !!profile?.user_id),
   });
 
   const checkIsAuth = () => {
