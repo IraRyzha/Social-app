@@ -3,15 +3,16 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    env_file: ./backend/.env
     environment:
-      API_URL: ${API_URL} # Встановлюється як змінна середовища
+      API_URL: ${API_URL:-http://localhost:3000} # Встановлюється як змінна середовища
       DATABASE_URL: ${DATABASE_URL} # Render автоматично створить цю змінну      DATABASE_HOST: db
       DATABASE_NAME: dev_db
       DATABASE_PASSWORD: devpassword
       DATABASE_PORT: "5432"
       DATABASE_USER: devuser
-      JWT_SECRET: your_jwt_secret
-      PORT: "3000"
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${PORT:-3000}
     ports:
       - "3000:3000" # Публікує бекенд на порту 3002, перенаправляючи на внутрішній порт 3000
     volumes:
@@ -23,9 +24,9 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_DB: dev_db
-      POSTGRES_USER: devuser
-      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: ${DATABASE_NAME} # Використовує змінні з .env
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - "5432:5432" # Публікує PostgreSQL на порту 5432
     volumes:
