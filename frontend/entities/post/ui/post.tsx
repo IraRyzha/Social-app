@@ -68,7 +68,7 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
       router.push("auth");
       return;
     }
-    router.push(`users/${user.id}`);
+    router.push(`/${user.id}`);
   };
 
   const handleCheckLike = async () => {
