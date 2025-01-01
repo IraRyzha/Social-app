@@ -15,6 +15,7 @@ import { toggleLike } from "../api/toggle-like";
 import { HeartFilledIcon } from "@/shared/ui/icons/heart-filled-icon";
 import { useAppSelector } from "@/config/hooks";
 import authSlice from "@/features/auth/model/authSlice";
+import Link from "next/link";
 
 const avatars = [
   { name: "flash", image: flashLogo },
@@ -108,9 +109,10 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
   return (
     <div className="flex flex-col items-start bg-white py-3 px-5 rounded-lg shadow-md">
       <div className="w-full flex flex-1 justify-between">
-        <div
+        <Link
           className="flex flex-1 items-center cursor-pointer"
-          onClick={handlePostOwnerProfile}
+          href={`/users/${user.id}`}
+          // onClick={handlePostOwnerProfile}
         >
           <Image
             src={postOwnerAvatar ? postOwnerAvatar.image : userImage}
@@ -123,7 +125,7 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
             <h3 className="font-semibold text-gray-900">{user.name}</h3>
             <span className="text-sm text-gray-500">{formatTimeAgo(date)}</span>
           </div>
-        </div>
+        </Link>
         <div className="flex justify-center items-center gap-[3px]">
           {isLiked ? (
             <HeartFilledIcon onClick={() => handleLike()} />
