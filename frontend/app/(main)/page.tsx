@@ -33,7 +33,7 @@ export default function Home() {
     isLoading,
     isError,
   } = useQuery<{ posts: IPost[]; total: number }>({
-    queryKey: ["posts", currentPage],
+    queryKey: ["posts", currentPage, activeTab],
     queryFn: async () => {
       console.log("Fetching data from API...");
       if (activeTab === "all") {

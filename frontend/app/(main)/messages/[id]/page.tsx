@@ -53,7 +53,7 @@ export default function Chat() {
 
   useEffect(() => {
     if (profile && profile.user_id) {
-      const newSocket = io("http://localhost:3002/chat", {
+      const newSocket = io("https://social-app-20jv.onrender.com/chat", {
         transports: ["websocket"],
         query: { chatId: params.id },
       });

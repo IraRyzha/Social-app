@@ -12,7 +12,7 @@ export default function MainLayout({
 }) {
   return (
     <AppProvider>
-      <Suspense fallback={<LoadingSpinner />}>
+      {/* <Suspense fallback={<LoadingSpinner />}> */}
         <div className="w-full h-auto relative z-10">
           <div className="w-full h-full relative flex justify-between md:flex-row flex-col md:p-0">
             <div className="w-1/5 h-screen hidden md:block sticky inset-y-0 min-w-[10%]">
@@ -33,7 +33,7 @@ export default function MainLayout({
             </div>
           </div>
         </div>
-      </Suspense>
+      {/* </Suspense> */}
     </AppProvider>
   );
 }
