@@ -68,7 +68,10 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
       router.push("auth");
       return;
     }
-    router.push(`/${user.id}`);
+    // router.push(`/users/${user.id}`);
+    const path = `/users/${user.id}`;
+    console.log("Navigating to:", path); // Перевіряємо, який шлях генерується
+    router.push(path);
   };
 
   const handleCheckLike = async () => {
