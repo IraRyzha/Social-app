@@ -64,7 +64,8 @@ export const Post = ({ id, user, text, date, likes, categories }: Props) => {
 
   const postOwnerAvatar = avatars.find((avatar) => avatar.name === user.photo);
 
-  const handlePostOwnerProfile = () => {
+  const handlePostOwnerProfile = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault(); 
     if (!profile) {
       router.push("auth");
       return;

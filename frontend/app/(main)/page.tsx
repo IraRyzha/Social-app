@@ -51,9 +51,6 @@ export default function Home() {
     },
   });
 
-  console.log("total: ");
-  console.log(total);
-
   const checkIsAuth = () => {
     if (!isAuthenticated) {
       return false;
