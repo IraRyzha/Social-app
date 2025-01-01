@@ -16,6 +16,8 @@ export default function UserProfile() {
 
   const fetchProfile = async () => {
     const response: IProfile = await getProfile(params.id as string);
+    console.log("received profile: ");
+    console.log(response);
     setUserProfile(response);
   };
 
